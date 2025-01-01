@@ -13,8 +13,15 @@
 <body class="font-sans antialiased">
 	<h1>@yield('title')</h1>
 
+	@if (Auth::check())
+		<div>
+			<a href="{{ route('dashboard') }}">Dashboard</a> -
+			<a href="{{ route('funds') }}">Funds</a>
+		</div>
+	@endif
+
 	@if ($errors->any())
-		<div class="mb-4 rounded-md bg-red-500 p-2 text-white">
+		<div class="mb-4 bg-red-500 p-2 text-white">
 			@foreach ($errors->all() as $error)
 				{{ $error }}
 			@endforeach
@@ -22,6 +29,12 @@
 	@endif
 
 	@yield('content')
+
+	<hr>
+	{{ Auth::user()?->name ?? 'Guest' }}
+	@if (Auth::check())
+		- <a href="{{ route('logout') }}">Logout</a>
+	@endif
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 @extends('layouts.default')
+@section('title', 'Dashboard')
 
 @section('content')
-	<h1>Crunch Money</h1>
 @endsection

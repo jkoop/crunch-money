@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController extends Controller {
+final class LoginController extends Controller {
 	public function get() {
 		return view("login");
 	}
