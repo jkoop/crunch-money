@@ -1,0 +1,28 @@
+{
+    "plugins": ["@prettier/plugin-php", "@shufo/prettier-plugin-blade"],
+    "overrides": [
+        {
+            "files": ".prettierrc",
+            "options": { "parser": "json" }
+        },
+        {
+            "files": ["*.blade.php"],
+            "options": {
+                "printWidth": 120,
+                "parser": "blade",
+                "tabWidth": 1,
+                "sortTailwindcssClasses": true,
+                "sortHtmlAttributes": "code-guide",
+                "singleQuote": true
+            }
+        }
+    ],
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "useTabs": true,
+    "semi": false,
+    "singleQuote": false,
+    "printWidth": 120,
+    "braceStyle": "1tbs",
+    "bracketSameLine": false
+}
