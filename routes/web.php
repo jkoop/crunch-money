@@ -15,6 +15,7 @@ Route::middleware("auth")->group(function () {
 	Route::get("/b", [BudgetsController::class, "get"])->name("budgets");
 
 	Route::get("/f", [FundsController::class, "get"])->name("funds");
+	Route::get("/f/_balances", [FundController::class, "balances"])->name("funds.balances");
 	Route::get("/f/new", [FundController::class, "new"])->name("funds.new");
 	Route::get("/f/{slug}", [FundController::class, "get"])->name("funds.get");
 	Route::post("/f/{slug}", [FundController::class, "post"])->name("funds.post");
@@ -23,6 +24,7 @@ Route::middleware("auth")->group(function () {
 
 	Route::get("/p", [PeriodsController::class, "get"])->name("periods");
 	Route::get("/p/{start_date}", [PeriodController::class, "get"])->name("periods.get");
+	Route::post("/p/{start_date}", [PeriodController::class, "post"])->name("periods.post");
 
 	Route::post("/set-period", [PeriodsController::class, "set"])->name("set-period");
 	Route::get("/logout", [LoginController::class, "logout"])->name("logout");

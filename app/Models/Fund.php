@@ -7,6 +7,7 @@ use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 #[ScopedBy([OwnedScope::class])]
 final class Fund extends Model {

@@ -37,29 +37,31 @@ final class Period extends Model {
 	}
 
 	public static function current(): Period {
-		if (Session::has("period_id")) {
-			$period = Period::find(Session::get("period_id"));
+		return once(function () {
+			if (Session::has("period_id")) {
+				$period = Period::find(Session::get("period_id"));
+				if ($period != null) {
+					return $period;
+				}
+				Session::forget("period_id");
+			}
+
+			$now = Carbon::now();
+			$period = Period::where("start", "<=", $now)->where("end", ">=", $now)->first();
+
 			if ($period != null) {
+				Session::put("period_id", $period->id);
 				return $period;
 			}
-			Session::forget("period_id");
-		}
 
-		$now = Carbon::now();
-		$period = Period::where("start", "<=", $now)->where("end", ">=", $now)->first();
+			$period = Period::create([
+				"owner_id" => Auth::id(),
+				"start" => (clone $now)->startOfMonth(),
+				"end" => (clone $now)->endOfMonth(),
+			]);
 
-		if ($period != null) {
 			Session::put("period_id", $period->id);
 			return $period;
-		}
-
-		$period = Period::create([
-			"owner_id" => Auth::id(),
-			"start" => (clone $now)->startOfMonth(),
-			"end" => (clone $now)->endOfMonth(),
-		]);
-
-		Session::put("period_id", $period->id);
-		return $period;
+		});
 	}
 }

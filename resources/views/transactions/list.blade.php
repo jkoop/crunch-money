@@ -21,8 +21,14 @@
 			@foreach ($transactions as $transaction)
 				<tr>
 					<td>{{ $transaction->date->format('Y-m-d') }}</td>
-					<td>{{ $transaction->amount }}</td>
-					<td>{{ $transaction->fund->name ?? $transaction->budget->name }}</td>
+					<td class="text-right">{{ $transaction->amount }}</td>
+					<td>
+						@if ($transaction->fund != null)
+							<a href="/f/{{ $transaction->fund->slug }}">{{ $transaction->fund->name }}</a>
+						@elseif ($transaction->budget != null)
+							<a href="/b/{{ $transaction->budget->slug }}">{{ $transaction->budget->name }}</a>
+						@endif
+					</td>
 					<td>{{ $transaction->description }}</td>
 				</tr>
 			@endforeach

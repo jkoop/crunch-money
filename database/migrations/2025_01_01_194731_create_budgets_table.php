@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->foreignId("owner_id")->constrained("users");
 			$table->foreignId("period_id")->constrained("periods");
 			$table->string("name");
-			$table->decimal("amount", 10, 2);
+			$table->string("slug")->unique();
 			$table->timestamps();
 		});
 	}
