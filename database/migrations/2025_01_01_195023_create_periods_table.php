@@ -11,6 +11,7 @@ return new class extends Migration {
 			$table->foreignId("owner_id")->constrained("users");
 			$table->date("start");
 			$table->date("end");
+			$table->unique(["owner_id", "start"]);
 			$table->timestamps();
 		});
 	}

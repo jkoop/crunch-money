@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Date;
 use App\Models\Scopes\OwnedScope;
 use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
@@ -12,7 +13,7 @@ final class Transaction extends Model {
 	protected $guarded = [];
 
 	protected $casts = [
-		"date" => "date",
+		"date" => Date::class,
 		"is_system" => "boolean",
 		"amount" => "decimal:2",
 	];
@@ -22,10 +23,14 @@ final class Transaction extends Model {
 	}
 
 	public function budget() {
-		return $this->belongsTo(Budget::class);
+		return $this->belongsTo(Budget::class)->withoutGlobalScope(PeriodScope::class);
 	}
 
 	public function fund() {
 		return $this->belongsTo(Fund::class);
+	}
+
+	public function period() {
+		return $this->belongsTo(Period::class);
 	}
 }

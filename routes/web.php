@@ -1,15 +1,18 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BudgetsController;
 use App\Http\Controllers\FundController;
 use App\Http\Controllers\FundsController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PeriodController;
+use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware("auth")->group(function () {
-	Route::get("/", [DashboardController::class, "get"])->name("dashboard");
+	Route::redirect("/", "/b")->name("dashboard");
+
+	Route::get("/b", [BudgetsController::class, "get"])->name("budgets");
 
 	Route::get("/f", [FundsController::class, "get"])->name("funds");
 	Route::get("/f/new", [FundController::class, "new"])->name("funds.new");
@@ -18,9 +21,14 @@ Route::middleware("auth")->group(function () {
 
 	Route::get("/t", [TransactionsController::class, "get"])->name("transactions");
 
-	Route::post("/set-period", [PeriodController::class, "set"])->name("set-period");
+	Route::get("/p", [PeriodsController::class, "get"])->name("periods");
+	Route::get("/p/{start_date}", [PeriodController::class, "get"])->name("periods.get");
+
+	Route::post("/set-period", [PeriodsController::class, "set"])->name("set-period");
 	Route::get("/logout", [LoginController::class, "logout"])->name("logout");
 });
 
-Route::get("/login", [LoginController::class, "get"]);
-Route::post("/login", [LoginController::class, "post"])->name("login");
+Route::middleware("guest")->group(function () {
+	Route::get("/login", [LoginController::class, "get"])->name("login");
+	Route::post("/login", [LoginController::class, "post"]);
+});

@@ -15,9 +15,10 @@
 
 	@if (Auth::check())
 		<div>
-			<a href="{{ route('dashboard') }}">Dashboard</a> -
+			<a href="{{ route('budgets') }}">Budgets</a> -
 			<a href="{{ route('funds') }}">Funds</a> -
-			<a href="{{ route('transactions') }}">Transactions</a>
+			<a href="{{ route('transactions') }}">Transactions</a> -
+			<a href="{{ route('periods') }}">Periods</a>
 		</div>
 		<div>
 			<x-period-picker />

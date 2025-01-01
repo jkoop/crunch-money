@@ -2,19 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fund;
 use App\Models\Period;
+use App\Models\Scopes\PeriodScope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 final class PeriodController extends Controller {
-	public function set(Request $request) {
-		$request->validate([
-			"period_id" => "required|exists:periods,id",
-		]);
+	public function get(Request $request, string $start_date) {
+		$period = Period::where("start", $start_date)->firstOrFail();
+		$funds = Fund::withTrashed()
+			->where(function (Builder $builder) use ($period): void {
+				$builder->where("deleted_at", null)->orWhere("deleted_at", ">=", $period->start);
+			})
+			->with("transactions", function (HasMany $builder): void {
+				$builder->withoutGlobalScope(PeriodScope::class);
+			})
+			->get()
+			->map(
+				fn(Fund $fund) => [
+					"id" => $fund->id,
+					"name" => $fund->name,
+					"balance" => $fund->balance,
+					"amount" => $fund
+						->transactions()
+						->where("period_id", $period->id)
+						->first()
+						?->amount(),
+				],
+			);
 
-		$period = Period::find($request->period_id);
-		Session::put("period_id", $period->id);
-
-		return redirect()->back();
+		return view("periods.edit", compact("period", "funds"));
 	}
 }

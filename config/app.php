@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+
 return [
 	/*
     |--------------------------------------------------------------------------
@@ -117,4 +119,10 @@ return [
 		"driver" => env("APP_MAINTENANCE_DRIVER", "file"),
 		"store" => env("APP_MAINTENANCE_STORE", "database"),
 	],
+
+	"aliases" => Facade::defaultAliases()
+		->merge([
+			"Period" => App\Models\Period::class,
+		])
+		->toArray(),
 ];

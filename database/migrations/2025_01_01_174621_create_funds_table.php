@@ -16,6 +16,7 @@ return new class extends Migration {
 			        slug VARCHAR NOT NULL,
 			        created_at TIMESTAMP NULL,
 			        updated_at TIMESTAMP NULL,
+			        deleted_at TIMESTAMP NULL,
 			        FOREIGN KEY (owner_id) REFERENCES users(id),
 			        UNIQUE (owner_id, slug),
 			        CHECK (slug REGEXP '^[a-z0-9-]+$'

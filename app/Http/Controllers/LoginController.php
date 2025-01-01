@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 final class LoginController extends Controller {
 	public function get() {
@@ -26,5 +27,11 @@ final class LoginController extends Controller {
 
 		Auth::login($user);
 		return redirect()->route("dashboard");
+	}
+
+	public function logout() {
+		Auth::logout();
+		Session::invalidate();
+		return redirect()->route("login");
 	}
 }

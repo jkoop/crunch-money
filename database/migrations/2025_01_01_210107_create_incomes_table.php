@@ -6,21 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 	public function up(): void {
-		Schema::create("transactions", function (Blueprint $table) {
+		Schema::create("incomes", function (Blueprint $table) {
 			$table->id();
 			$table->foreignId("owner_id")->constrained("users");
-			$table->foreignId("fund_id")->nullable()->constrained("funds");
-			$table->foreignId("budget_id")->nullable()->constrained("budgets");
 			$table->foreignId("period_id")->constrained("periods");
-			$table->string("description");
-			$table->date("date");
+			$table->string("name");
 			$table->decimal("amount", 10, 2);
-			$table->boolean("is_system")->default(false);
 			$table->timestamps();
 		});
 	}
 
 	public function down(): void {
-		Schema::dropIfExists("transactions");
+		Schema::dropIfExists("incomes");
 	}
 };
