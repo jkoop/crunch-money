@@ -16,7 +16,8 @@
 	@if (Auth::check())
 		<div>
 			<a href="{{ route('dashboard') }}">Dashboard</a> -
-			<a href="{{ route('funds') }}">Funds</a>
+			<a href="{{ route('funds') }}">Funds</a> -
+			<a href="{{ route('transactions') }}">Transactions</a>
 		</div>
 	@endif
 

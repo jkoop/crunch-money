@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class FundController extends Controller {
+final class FundController extends Controller {
 	public function new() {
 		return view("funds.edit", [
 			"title" => "New fund",

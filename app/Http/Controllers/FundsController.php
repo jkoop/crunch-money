@@ -6,7 +6,7 @@ use App\Models\Fund;
 
 final class FundsController extends Controller {
 	public function get() {
-		return view("funds", [
+		return view("funds.list", [
 			"funds" => Fund::orderBy("name")->get(),
 		]);
 	}

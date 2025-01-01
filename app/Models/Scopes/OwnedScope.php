@@ -9,6 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 final class OwnedScope implements Scope {
 	public function apply(Builder $builder, Model $model): void {
-		$builder->where("user_id", Auth::id());
+		$builder->where("owner_id", Auth::id());
 	}
 }

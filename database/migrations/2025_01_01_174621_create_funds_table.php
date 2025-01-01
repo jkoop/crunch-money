@@ -11,13 +11,13 @@ return new class extends Migration {
 			<<<SQL
 			    CREATE TABLE funds (
 			        id INTEGER PRIMARY KEY AUTOINCREMENT,
-			        user_id INTEGER NOT NULL,
+			        owner_id INTEGER NOT NULL,
 			        name VARCHAR NOT NULL,
 			        slug VARCHAR NOT NULL,
 			        created_at TIMESTAMP NULL,
 			        updated_at TIMESTAMP NULL,
-			        FOREIGN KEY (user_id) REFERENCES users(id),
-			        UNIQUE (user_id, slug),
+			        FOREIGN KEY (owner_id) REFERENCES users(id),
+			        UNIQUE (owner_id, slug),
 			        CHECK (slug REGEXP '^[a-z0-9-]+$'
 			            AND slug NOT LIKE '-%'
 			            AND slug NOT LIKE '%--%'
