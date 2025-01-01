@@ -55,7 +55,7 @@ final class FundController extends Controller {
 			]);
 		} else {
 			Fund::create([
-				"user_id" => Auth::id(),
+				"owner_id" => Auth::id(),
 				"name" => $request->name,
 				"slug" => $slug,
 			]);

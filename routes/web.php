@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FundController;
 use App\Http\Controllers\FundsController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,7 @@ Route::middleware("auth")->group(function () {
 
 	Route::get("/t", [TransactionsController::class, "get"])->name("transactions");
 
+	Route::post("/set-period", [PeriodController::class, "set"])->name("set-period");
 	Route::get("/logout", [LoginController::class, "logout"])->name("logout");
 });
 

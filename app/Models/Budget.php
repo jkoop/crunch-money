@@ -8,24 +8,14 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 
 #[ScopedBy([OwnedScope::class, PeriodScope::class])]
-final class Transaction extends Model {
+final class Budget extends Model {
 	protected $guarded = [];
-
-	protected $casts = [
-		"date" => "date",
-		"is_system" => "boolean",
-		"amount" => "decimal:2",
-	];
 
 	public function owner() {
 		return $this->belongsTo(User::class, "owner_id");
 	}
 
-	public function budget() {
-		return $this->belongsTo(Budget::class);
-	}
-
-	public function fund() {
-		return $this->belongsTo(Fund::class);
+	public function transactions() {
+		return $this->hasMany(Transaction::class);
 	}
 }

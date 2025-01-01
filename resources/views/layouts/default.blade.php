@@ -19,6 +19,9 @@
 			<a href="{{ route('funds') }}">Funds</a> -
 			<a href="{{ route('transactions') }}">Transactions</a>
 		</div>
+		<div>
+			<x-period-picker />
+		</div>
 	@endif
 
 	@if ($errors->any())
