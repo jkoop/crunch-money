@@ -49,6 +49,7 @@
 	@if (Auth::check())
 		- <a href="{{ route('logout') }}">Logout</a>
 	@endif
+	- <a href="https://github.com/jkoop/crunch-money" target="_blank">Contribute</a>
 </body>
 
 </html>
