@@ -27,6 +27,7 @@ Route::middleware("auth")->group(function () {
 	Route::post("/t", [TransactionsController::class, "post"])->name("transactions.post");
 
 	Route::get("/p", [PeriodsController::class, "get"])->name("periods");
+	Route::get("/p/new", [PeriodController::class, "get"])->name("periods.new");
 	Route::get("/p/{start_date}", [PeriodController::class, "get"])->name("periods.get");
 	Route::post("/p/{start_date}", [PeriodController::class, "post"])->name("periods.post");
 

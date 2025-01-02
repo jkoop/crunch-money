@@ -17,8 +17,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 final class PeriodController extends Controller {
-	public function get(Request $request, string $start_date) {
-		$period = Period::where("start", $start_date)->firstOrFail();
+	public function get(Request $request, string $start_date = "new") {
+		if ($start_date == "new") {
+			$period = new Period(["owner_id" => Auth::id()]);
+			$slug = "new";
+		} else {
+			$period = Period::where("start", $start_date)->firstOrFail();
+			$slug = $start_date;
+		}
 
 		$budgets = $period
 			->budgets()
@@ -50,7 +56,7 @@ final class PeriodController extends Controller {
 				],
 			);
 
-		return view("periods.edit", compact("period", "budgets", "funds"));
+		return view("periods.edit", compact("period", "budgets", "funds", "slug"));
 	}
 
 	public function post(Request $request, string $start_date) {
@@ -77,6 +83,8 @@ final class PeriodController extends Controller {
 		$period->start = $request->start;
 		$period->end = $request->end;
 		$period->save();
+
+		$warnings = [];
 
 		$incomeIds = collect($request->incomes)
 			->pluck("id")
@@ -110,7 +118,12 @@ final class PeriodController extends Controller {
 			->pluck("id")
 			->toArray();
 
-		foreach (Budget::withTrashed()->get() as $budget) {
+		foreach (
+			Budget::withTrashed()
+				->where("period_id", $period->id)
+				->get()
+			as $budget
+		) {
 			if (!in_array($budget->id, $budgetIds)) {
 				$budget->update([
 					"deleted_at" => Carbon::createFromTimestamp(
@@ -129,6 +142,18 @@ final class PeriodController extends Controller {
 			$existingBudget = Budget::withoutGlobalScope(PeriodScope::class)->find($budget["id"]);
 			if ($existingBudget == null || $existingBudget->period_id != $period->id) {
 				$slug = Str::slug($budget["name"]);
+
+				if ($slug == "new") {
+					$warnings[] = "Budget name cannot be like 'new'. Automatically generating a new name.";
+					$budget["name"] = "New budget";
+					$slug = Str::slug($budget["name"]);
+				}
+				if ($slug == "") {
+					$warnings[] = "Budget name cannot be empty. Automatically generating a new name.";
+					$budget["name"] = "New budget";
+					$slug = Str::slug($budget["name"]);
+				}
+
 				$counter = "";
 				while (true) {
 					try {
@@ -151,6 +176,18 @@ final class PeriodController extends Controller {
 				}
 			} else {
 				$slug = Str::slug($budget["name"]);
+
+				if ($slug == "new") {
+					$warnings[] = "Budget name cannot be like 'new'. Automatically generating a new name.";
+					$budget["name"] = "New budget";
+					$slug = Str::slug($budget["name"]);
+				}
+				if ($slug == "") {
+					$warnings[] = "Budget name cannot be empty. Automatically generating a new name.";
+					$budget["name"] = "New budget";
+					$slug = Str::slug($budget["name"]);
+				}
+
 				$counter = "";
 				while (true) {
 					try {
@@ -225,6 +262,18 @@ final class PeriodController extends Controller {
 			$existingFund = Fund::find($fund["id"]);
 			if ($existingFund == null) {
 				$slug = Str::slug($fund["name"]);
+
+				if ($slug == "new") {
+					$warnings[] = "Fund name cannot be like 'new'. Automatically generating a new name.";
+					$fund["name"] = "New fund";
+					$slug = Str::slug($fund["name"]);
+				}
+				if ($slug == "") {
+					$warnings[] = "Fund name cannot be empty. Automatically generating a new name.";
+					$fund["name"] = "New fund";
+					$slug = Str::slug($fund["name"]);
+				}
+
 				$counter = "";
 				while (true) {
 					try {
@@ -246,6 +295,18 @@ final class PeriodController extends Controller {
 				}
 			} else {
 				$slug = Str::slug($fund["name"]);
+
+				if ($slug == "new") {
+					$warnings[] = "Fund name cannot be like 'new'. Automatically generating a new name.";
+					$fund["name"] = "New fund";
+					$slug = Str::slug($fund["name"]);
+				}
+				if ($slug == "") {
+					$warnings[] = "Fund name cannot be empty. Automatically generating a new name.";
+					$fund["name"] = "New fund";
+					$slug = Str::slug($fund["name"]);
+				}
+
 				$counter = "";
 				while (true) {
 					try {
@@ -288,6 +349,6 @@ final class PeriodController extends Controller {
 			}
 		}
 
-		return redirect()->route("periods.get", $period->start->format("Y-m-d"));
+		return redirect()->route("periods.get", $period->start->format("Y-m-d"))->with("warnings", $warnings);
 	}
 }

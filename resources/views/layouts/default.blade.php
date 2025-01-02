@@ -34,6 +34,14 @@
 		</div>
 	@endif
 
+	@if (session('warnings'))
+		<div class="mb-4 bg-yellow-500 p-2 text-white">
+			@foreach (session('warnings') as $warning)
+				{{ $warning }}
+			@endforeach
+		</div>
+	@endif
+
 	@yield('content')
 
 	<hr>

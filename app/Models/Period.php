@@ -33,7 +33,7 @@ final class Period extends Model {
 	}
 
 	public function budgets() {
-		return $this->hasMany(Budget::class);
+		return $this->hasMany(Budget::class)->withoutGlobalScope(PeriodScope::class);
 	}
 
 	public static function current(): Period {

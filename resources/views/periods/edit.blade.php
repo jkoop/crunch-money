@@ -2,7 +2,7 @@
 @section('title', $period->start->format('D M j Y') . ' - Periods')
 
 @section('content')
-	<form action="/p/{{ $period->start->format('Y-m-d') }}" method="post" x-data="data">
+	<form action="/p/{{ $slug }}" method="post" x-data="data">
 		@csrf
 		<label for="start">Start date</label>
 		<input id="start" name="start" type="date" x-model="start">
