@@ -110,9 +110,17 @@ final class PeriodController extends Controller {
 			->pluck("id")
 			->toArray();
 
-		foreach ($period->budgets as $budget) {
+		foreach (Budget::withTrashed()->get() as $budget) {
 			if (!in_array($budget->id, $budgetIds)) {
-				$budget->delete();
+				$budget->update([
+					"deleted_at" => Carbon::createFromTimestamp(
+						min(
+							Carbon::now()->timestamp,
+							$period->end->timestamp,
+							$budget->deleted_at?->timestamp ?? PHP_INT_MAX,
+						),
+					),
+				]);
 			}
 		}
 
@@ -191,9 +199,24 @@ final class PeriodController extends Controller {
 
 		foreach (Fund::withTrashed()->get() as $fund) {
 			if (!in_array($fund->id, $fundIds)) {
-				$fund->update([
-					"deleted_at" => Carbon::minValue(Carbon::now(), $period->end, $fund->deleted_at),
-				]);
+				$fund
+					->transactions()
+					->where("period_id", $period->id)
+					->delete();
+
+				if ($fund->transactions()->where("amount", "!=", 0)->exists() == false) {
+					$fund->forceDelete();
+				} elseif ($fund->balance == 0) {
+					$fund->update([
+						"deleted_at" => Carbon::createFromTimestamp(
+							min(
+								Carbon::now()->timestamp,
+								$period->end->timestamp,
+								$fund->deleted_at?->timestamp ?? PHP_INT_MAX,
+							),
+						),
+					]);
+				}
 			}
 		}
 
