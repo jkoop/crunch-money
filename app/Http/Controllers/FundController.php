@@ -61,13 +61,13 @@ final class FundController extends Controller {
 
 		$slug = Str::slug($request->name);
 		if (Fund::where("slug", $slug)->exists()) {
-			return redirect()->route("funds.new")->with("error", "Fund with this name already exists");
+			return back()->with("error", "Fund with this name already exists");
 		}
 		if ($slug == "new") {
-			return redirect()->route("funds.new")->with("error", "Fund name cannot be like 'new'");
+			return back()->with("error", "Fund name cannot be like 'new'");
 		}
 		if ($slug == "") {
-			return redirect()->route("funds.new")->with("error", "Fund name cannot be empty");
+			return back()->with("error", "Fund name cannot be empty");
 		}
 
 		if ($fund != null) {

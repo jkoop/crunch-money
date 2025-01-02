@@ -66,7 +66,11 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Fund <button type="button" x-on:click="_funds.push({ id: null, name: '', amount: null })">+</button>
+					<th>
+						Fund
+						<button type="button" x-on:click="funds.push({ id: null, name: '', amount: null }); updateFundBalances()">
+							+
+						</button>
 					</th>
 					<th>Amount</th>
 				</tr>
@@ -143,9 +147,10 @@
 						}
 					},
 					surplus: function() {
-						return this.incomes.reduce((acc, income) => acc + income.amount, 0) -
-							this.budgets.reduce((acc, budget) => acc + budget.amount, 0) -
-							this.funds.reduce((acc, fund) => acc + fund.amount, 0);
+						return 0 +
+							this.incomes.reduce((acc, income) => acc + parseInt("0" + income.amount), 0) -
+							this.budgets.reduce((acc, budget) => acc + parseInt("0" + budget.amount), 0) -
+							this.funds.reduce((acc, fund) => acc + parseInt("0" + fund.amount), 0);
 					},
 					saveButtonText: function() {
 						if (this.incomes.length < 1) return "You must have at least one income";

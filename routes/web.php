@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\BudgetsController;
 use App\Http\Controllers\FundController;
 use App\Http\Controllers\FundsController;
@@ -13,6 +14,8 @@ Route::middleware("auth")->group(function () {
 	Route::redirect("/", "/b")->name("dashboard");
 
 	Route::get("/b", [BudgetsController::class, "get"])->name("budgets");
+	Route::get("/b/{slug}", [BudgetController::class, "get"])->name("budgets.get");
+	Route::post("/b/{slug}", [BudgetController::class, "post"])->name("budgets.post");
 
 	Route::get("/f", [FundsController::class, "get"])->name("funds");
 	Route::get("/f/_balances", [FundController::class, "balances"])->name("funds.balances");

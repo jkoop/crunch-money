@@ -11,8 +11,9 @@ return new class extends Migration {
 			$table->foreignId("owner_id")->constrained("users");
 			$table->foreignId("period_id")->constrained("periods");
 			$table->string("name");
-			$table->string("slug")->unique();
+			$table->string("slug");
 			$table->timestamps();
+			$table->unique(["owner_id", "slug"]);
 		});
 	}
 

@@ -22,4 +22,8 @@ final class Budget extends Model {
 	public function transactions() {
 		return $this->hasMany(Transaction::class)->withoutGlobalScope(PeriodScope::class);
 	}
+
+	public function getBalanceAttribute() {
+		return $this->transactions->sum("amount");
+	}
 }

@@ -25,8 +25,9 @@
 		</div>
 	@endif
 
-	@if ($errors->any())
+	@if (session('error') || $errors->any())
 		<div class="mb-4 bg-red-500 p-2 text-white">
+			{{ session('error') }}
 			@foreach ($errors->all() as $error)
 				{{ $error }}
 			@endforeach

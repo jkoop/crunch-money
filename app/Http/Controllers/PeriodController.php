@@ -10,10 +10,12 @@ use App\Models\Scopes\PeriodScope;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+
 final class PeriodController extends Controller {
 	public function get(Request $request, string $start_date) {
 		$period = Period::where("start", $start_date)->firstOrFail();
@@ -118,17 +120,47 @@ final class PeriodController extends Controller {
 			// [id, name, amount]
 			$existingBudget = Budget::withoutGlobalScope(PeriodScope::class)->find($budget["id"]);
 			if ($existingBudget == null || $existingBudget->period_id != $period->id) {
-				$existingBudget = Budget::create([
-					"owner_id" => Auth::id(),
-					"period_id" => $period->id,
-					"name" => $budget["name"],
-					"slug" => Str::slug($budget["name"]),
-				]);
+				$slug = Str::slug($budget["name"]);
+				$counter = "";
+				while (true) {
+					try {
+						$existingBudget = Budget::create([
+							"owner_id" => Auth::id(),
+							"period_id" => $period->id,
+							"name" => $budget["name"],
+							"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
+						]);
+						break;
+					} catch (UniqueConstraintViolationException $e) {
+						if (!Str::of($e)->contains("UNIQUE constraint failed: budgets.owner_id, budgets.slug")) {
+							throw $e;
+						}
+						if ($counter == "") {
+							$counter = -1;
+						}
+						$counter--;
+					}
+				}
 			} else {
-				$existingBudget->update([
-					"name" => $budget["name"],
-					"slug" => Str::slug($budget["name"]),
-				]);
+				$slug = Str::slug($budget["name"]);
+				$counter = "";
+				while (true) {
+					try {
+						$existingBudget->update([
+							"name" => $budget["name"],
+							"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
+						]);
+						break;
+					} catch (UniqueConstraintViolationException $e) {
+						if (!Str::of($e)->contains("UNIQUE constraint failed: budgets.owner_id, budgets.slug")) {
+							throw $e;
+						}
+						if ($counter == "") {
+							$counter = -1;
+						}
+						$counter--;
+					}
+				}
 			}
 
 			$existingTransaction = Transaction::withoutGlobalScope(PeriodScope::class)
@@ -169,10 +201,46 @@ final class PeriodController extends Controller {
 			// [id, name, amount]
 			$existingFund = Fund::find($fund["id"]);
 			if ($existingFund == null) {
-				$existingFund = Fund::create([
-					"owner_id" => Auth::id(),
-					"name" => $fund["name"],
-				]);
+				$slug = Str::slug($fund["name"]);
+				$counter = "";
+				while (true) {
+					try {
+						$existingFund = Fund::create([
+							"owner_id" => Auth::id(),
+							"name" => $fund["name"],
+							"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
+						]);
+						break;
+					} catch (UniqueConstraintViolationException $e) {
+						if (!Str::of($e)->contains("UNIQUE constraint failed: funds.owner_id, funds.slug")) {
+							throw $e;
+						}
+						if ($counter == "") {
+							$counter = -1;
+						}
+						$counter--;
+					}
+				}
+			} else {
+				$slug = Str::slug($fund["name"]);
+				$counter = "";
+				while (true) {
+					try {
+						$existingFund->update([
+							"name" => $fund["name"],
+							"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
+						]);
+						break;
+					} catch (UniqueConstraintViolationException $e) {
+						if (!Str::of($e)->contains("UNIQUE constraint failed: funds.owner_id, funds.slug")) {
+							throw $e;
+						}
+						if ($counter == "") {
+							$counter = -1;
+						}
+						$counter--;
+					}
+				}
 			}
 
 			$existingTransaction = Transaction::withoutGlobalScope(PeriodScope::class)

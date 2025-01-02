@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 final class BudgetsController extends Controller {
 	public function get() {
 		return view("budgets.list", [
-			"budgets" => Budget::orderBy("name")->get(),
+			"budgets" => Budget::orderBy("name")->with("transactions")->get(),
 		]);
 	}
 }

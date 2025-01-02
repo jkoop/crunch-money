@@ -27,6 +27,8 @@
 							<a href="/f/{{ $transaction->fund->slug }}">{{ $transaction->fund->name }}</a>
 						@elseif ($transaction->budget != null)
 							<a href="/b/{{ $transaction->budget->slug }}">{{ $transaction->budget->name }}</a>
+						@else
+							none; @impossible
 						@endif
 					</td>
 					<td>{{ $transaction->description }}</td>
