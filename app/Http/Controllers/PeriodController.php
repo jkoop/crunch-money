@@ -52,7 +52,7 @@ final class PeriodController extends Controller {
 				fn(Fund $fund) => [
 					"id" => $fund->id,
 					"name" => $fund->name,
-					"amount" => $fund->transactions->where("period_id", $period->id)->first()?->amount,
+					"amount" => $fund->transactions->where("period_id", $period->id)->first()?->amount ?? 0,
 				],
 			);
 
