@@ -14,7 +14,9 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Income <button type="button" x-on:click="incomes.push({ id: null, name: '', amount: null })">+</button></th>
+					<th>Income <button type="button"
+							x-on:click="incomes.push({ id: 'new' + Math.random().toString(36).substring(2, 15), name: '', amount: null })">+</button>
+					</th>
 					<th>Amount</th>
 				</tr>
 			</thead>
@@ -40,7 +42,9 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Budget <button type="button" x-on:click="budgets.push({ id: null, name: '', amount: null })">+</button></th>
+					<th>Budget <button type="button"
+							x-on:click="budgets.push({ id: 'new' + Math.random().toString(36).substring(2, 15), name: '', amount: null })">+</button>
+					</th>
 					<th>Amount</th>
 				</tr>
 			</thead>
@@ -68,7 +72,8 @@
 				<tr>
 					<th>
 						Fund
-						<button type="button" x-on:click="funds.push({ id: null, name: '', amount: null }); updateFundBalances()">
+						<button type="button"
+							x-on:click="funds.push({ id: 'new' + Math.random().toString(36).substring(2, 15), name: '', amount: null }); updateFundBalances()">
 							+
 						</button>
 					</th>
