@@ -19,7 +19,6 @@ Route::middleware("auth")->group(function () {
 
 	Route::get("/f", [FundsController::class, "get"])->name("funds");
 	Route::get("/f/_balances", [FundController::class, "balances"])->name("funds.balances");
-	Route::get("/f/new", [FundController::class, "new"])->name("funds.new");
 	Route::get("/f/{slug}", [FundController::class, "get"])->name("funds.get");
 	Route::post("/f/{slug}", [FundController::class, "post"])->name("funds.post");
 

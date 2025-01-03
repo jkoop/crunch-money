@@ -42,18 +42,8 @@ final class FundController extends Controller {
 		)->header("Cache-Control", "private, max-age=5");
 	}
 
-	public function new() {
-		return view("funds.edit", [
-			"title" => "New fund",
-			"fund" => null,
-		]);
-	}
-
 	public function post(Request $request, string $slug) {
-		$fund = Fund::where("slug", $slug)->first();
-		if ($fund == null and $slug != "new") {
-			abort(404);
-		}
+		$fund = Fund::where("slug", $slug)->firstOrFail();
 
 		$request->validate([
 			"name" => "required|string|max:255",
@@ -70,18 +60,10 @@ final class FundController extends Controller {
 			return back()->with("error", "Fund name cannot be empty");
 		}
 
-		if ($fund != null) {
-			$fund->update([
-				"name" => $request->name,
-				"slug" => $slug,
-			]);
-		} else {
-			Fund::create([
-				"owner_id" => Auth::id(),
-				"name" => $request->name,
-				"slug" => $slug,
-			]);
-		}
+		$fund->update([
+			"name" => $request->name,
+			"slug" => $slug,
+		]);
 
 		return redirect()->route("funds");
 	}

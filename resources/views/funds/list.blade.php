@@ -2,7 +2,6 @@
 @section('title', 'Funds')
 
 @section('content')
-	<a href="/f/new">New fund</a>
 	<table>
 		<thead>
 			<tr>
