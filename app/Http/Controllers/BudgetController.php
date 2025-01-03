@@ -15,10 +15,7 @@ final class BudgetController extends Controller {
 	}
 
 	public function post(Request $request, string $slug) {
-		$budget = Budget::where("slug", $slug)->first();
-		if ($budget == null and $slug != "new") {
-			abort(404);
-		}
+		$budget = Budget::where("slug", $slug)->firstOrFail();
 
 		$request->validate([
 			"name" => "required|string|max:255",

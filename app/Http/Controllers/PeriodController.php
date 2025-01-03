@@ -349,6 +349,6 @@ final class PeriodController extends Controller {
 			}
 		}
 
-		return redirect()->route("periods.get", $period->start->format("Y-m-d"))->with("warnings", $warnings);
+		return redirect()->route("periods")->with("warnings", $warnings);
 	}
 }

@@ -2,6 +2,7 @@
 @section('title', 'Funds')
 
 @section('content')
+	<a href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit period</a>
 	<table>
 		<thead>
 			<tr>

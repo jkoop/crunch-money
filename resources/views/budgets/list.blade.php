@@ -2,7 +2,7 @@
 @section('title', 'Budgets')
 
 @section('content')
-	<a href="/p/{{ Period::current()->id }}">Edit period</a>
+	<a href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit period</a>
 	<table>
 		<thead>
 			<tr>
