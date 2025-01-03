@@ -31,7 +31,7 @@
 							none; @impossible
 						@endif
 					</td>
-					<td>{{ $transaction->description }}</td>
+					<td>{{ $transaction->getDescription() }}</td>
 				</tr>
 			@endforeach
 		</tbody>

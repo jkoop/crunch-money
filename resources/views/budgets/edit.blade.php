@@ -35,7 +35,7 @@
 			<tr>
 				<td>{{ $transaction->date->format('D M j Y') }}</td>
 				<td class="text-right">{{ $transaction->amount }}</td>
-				<td>{{ $transaction->description }}</td>
+				<td>{{ $transaction->getDescription() }}</td>
 			</tr>
 		@endforeach
 	</table>

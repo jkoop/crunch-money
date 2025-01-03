@@ -6,7 +6,6 @@ use App\Models\Fund;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 final class FundController extends Controller {
@@ -27,11 +26,9 @@ final class FundController extends Controller {
 			"date" => "required|date",
 		]);
 
-		$funds = Fund::withTrashed()
-			->with("transactions", function (HasMany $builder) use ($request): void {
-				$builder->where("date", "<", $request->date);
-			})
-			->get();
+		$funds = Fund::with([
+			"transactions" => fn(HasMany $builder) => $builder->where("date", "<", $request->date),
+		])->get();
 
 		return response(
 			$funds->mapWithKeys(

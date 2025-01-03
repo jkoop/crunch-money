@@ -36,6 +36,10 @@ final class Period extends Model {
 		return $this->hasMany(Budget::class)->withoutGlobalScope(PeriodScope::class);
 	}
 
+	public function funds() {
+		return $this->belongsToMany(Fund::class)->withoutGlobalScope(PeriodScope::class);
+	}
+
 	public static function current(): Period {
 		return once(function () {
 			if (Session::has("period_id")) {

@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Scope;
 
 final class PeriodScope implements Scope {
 	public function apply(Builder $builder, Model $model): void {
-		$builder->where("period_id", Period::current()->id);
+		$currentPeriodId = Period::current()->id;
+
+		if (method_exists($model, "period")) {
+			$builder->whereHas("period", fn(Builder $builder) => $builder->where("id", $currentPeriodId));
+		} elseif (method_exists($model, "periods")) {
+			$builder->whereHas("periods", fn(Builder $builder) => $builder->where("id", $currentPeriodId));
+		}
 	}
 }
