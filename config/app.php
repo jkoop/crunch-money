@@ -125,4 +125,8 @@ return [
 			"Period" => App\Models\Period::class,
 		])
 		->toArray(),
+
+	"service_status" => [
+		"url" => env("SERVICE_STATUS_URL", null),
+	],
 ];

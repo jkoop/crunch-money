@@ -50,6 +50,9 @@
 		- <a href="{{ route('logout') }}">Logout</a>
 	@endif
 	- <a href="https://github.com/jkoop/crunch-money" target="_blank">Contribute</a>
+	@if (config('app.service_status.url'))
+		- <a href="{{ config('app.service_status.url') }}" target="_blank">Service Status</a>
+	@endif
 </body>
 
 </html>
