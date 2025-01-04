@@ -24,14 +24,15 @@
 				<template x-for="(income, index) in incomes">
 					<tr>
 						<td>
-							<input type="hidden" x-bind:name="`incomes[${index}][id]`" x-model="income.id">
-							<input type="text" x-bind:name="`incomes[${index}][name]`" maxlength="255" x-model="income.name" required />
+							<input type="hidden" x-bind:name="income.id == 'carryover' ? '' : `incomes[${index}][id]`" x-model="income.id">
+							<input type="text" x-bind:name="income.id == 'carryover' ? '' : `incomes[${index}][name]`" maxlength="255"
+								x-model="income.name" x-bind:disabled="income.id == 'carryover'" required />
 						</td>
-						<td><input type="number" x-bind:name="`incomes[${index}][amount]`" step="0.01" min="0"
-								x-model="income.amount" required />
+						<td><input type="number" x-bind:name="income.id == 'carryover' ? '' : `incomes[${index}][amount]`" step="0.01"
+								min="0" x-bind:disabled="income.id == 'carryover'" x-model="income.amount" required />
 						</td>
 						<td>
-							<button type="button" x-cloak x-show="incomes.length > 1"
+							<button type="button" x-cloak x-show="incomes.length > 1 && income.id!='carryover'"
 								x-on:click="incomes = incomes.filter(i => i.id != income.id)">x</button>
 						</td>
 					</tr>
@@ -108,6 +109,14 @@
 	<script>
 		window.addEventListener('alpine:init', () => {
 			Alpine.data('data', () => {
+				const incomes = {{ Js::from($period->incomes) }};
+				incomes.unshift({
+					id: "carryover",
+					name: "carryover from last period",
+					amount: {{ Js::from($period->carryover) }},
+				});
+
+
 				return {
 					init: function() {
 						this.updateFundBalances();
@@ -120,7 +129,7 @@
 					startFlyAgain: false,
 					start: "{{ $period->start->format('Y-m-d') }}",
 					end: "{{ $period->end->format('Y-m-d') }}",
-					incomes: {{ Js::from($period->incomes) }},
+					incomes,
 					budgets: {{ Js::from($budgets) }},
 					funds: {{ Js::from($funds) }},
 					updateFundBalances: async function() {

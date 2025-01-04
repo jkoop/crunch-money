@@ -6,6 +6,7 @@ use App\Casts\Date;
 use App\Models\Scopes\OwnedScope;
 use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -67,5 +68,21 @@ final class Period extends Model {
 			Session::put("period_id", $period->id);
 			return $period;
 		});
+	}
+
+	public function previousPeriod(): Builder {
+		return self::where("end", (clone $this->start)->subDay()->format("Y-m-d"));
+	}
+
+	public function getCarryoverAttribute(): float {
+		$previousPeriod = $this->previousPeriod()
+			->with(["transactions" => fn($builder) => $builder->whereHas("budget")])
+			->first();
+
+		if ($previousPeriod == null) {
+			return 0;
+		}
+
+		return $previousPeriod->transactions->sum("amount");
 	}
 }
