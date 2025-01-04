@@ -19,11 +19,19 @@ use Illuminate\Support\Str;
 final class PeriodController extends Controller {
 	public function get(Request $request, string $start_date = "new") {
 		if ($start_date == "new") {
-			$period = new Period(["owner_id" => Auth::id()]);
 			$slug = "new";
+			$latestPeriod = Period::orderByDesc("start")->first() ?? throw new ImpossibleStateException();
+			$oldStart = $latestPeriod->start;
+			$oldEnd = $latestPeriod->end;
+			$oldDuration = round($oldStart->diffInDays($oldEnd));
+			$period = new Period([
+				"owner_id" => Auth::id(),
+				"start" => (clone $oldEnd)->addDay(),
+				"end" => (clone $oldEnd)->addDays($oldDuration),
+			]);
 		} else {
-			$period = Period::where("start", $start_date)->firstOrFail();
 			$slug = $start_date;
+			$period = Period::where("start", $start_date)->firstOrFail();
 		}
 
 		$budgets = $period
