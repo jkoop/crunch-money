@@ -74,9 +74,14 @@ final class Period extends Model {
 		return self::where("end", (clone $this->start)->subDay()->format("Y-m-d"));
 	}
 
-	public function getCarryoverAttribute(): float {
+	public function getCarryoverAttribute(self|int $excludePeriod = null): float {
+		if ($excludePeriod instanceof self) {
+			$excludePeriod = $excludePeriod->id;
+		}
+
 		$previousPeriod = $this->previousPeriod()
 			->with(["transactions" => fn($builder) => $builder->whereHas("budget")])
+			->where("id", "!=", $excludePeriod)
 			->first();
 
 		if ($previousPeriod == null) {

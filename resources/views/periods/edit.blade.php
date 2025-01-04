@@ -74,7 +74,7 @@
 					<th>
 						Fund
 						<button type="button"
-							x-on:click="funds.push({ id: 'new' + Math.random().toString(36).substring(2, 15), name: '', amount: null }); updateFundBalances()">
+							x-on:click="funds.push({ id: 'new' + Math.random().toString(36).substring(2, 15), name: '', amount: null }); updateAsynchronousData()">
 							+
 						</button>
 					</th>
@@ -119,51 +119,69 @@
 
 				return {
 					init: function() {
-						this.updateFundBalances();
+						this.updateAsynchronousData();
 						document.getElementById("start")
 							.addEventListener("change", () => {
-								this.updateFundBalances();
+								this.updateAsynchronousData();
 							});
 					},
-					startFlying: false,
-					startFlyAgain: false,
-					start: "{{ $period->start->format('Y-m-d') }}",
-					end: "{{ $period->end->format('Y-m-d') }}",
+					asynchronousDataFlying: false,
+					asynchronousDataFlyAgain: false,
+					start: {{ Js::from($period->start->format('Y-m-d')) }},
+					end: {{ Js::from($period->end->format('Y-m-d')) }},
 					incomes,
 					budgets: {{ Js::from($budgets) }},
 					funds: {{ Js::from($funds) }},
-					updateFundBalances: async function() {
-						if (this.startFlying) {
-							this.startFlyAgain = true;
+					updateAsynchronousData: async function() {
+						if (this.asynchronousDataFlying) {
+							this.asynchronousDataFlyAgain = true;
 							return;
 						}
-						this.startFlying = true;
+						this.asynchronousDataFlying = true;
 
 						for (const fund of this.funds) {
 							fund.balance = undefined;
 						}
+						this.incomes.forEach(income => {
+							if (income.id != 'carryover') return;
+							income.amount = undefined;
+						});
 
-						try {
-							const response = await fetch(`/f/_balances?date=${this.start}`);
-							const balances = await response.json();
+						const promises = [];
+						promises.push(axios(`/f/_balances?date=${this.start}`).then(response => {
 							for (const fund of this.funds) {
-								fund.balance = balances[fund.id] ?? 0;
+								fund.balance = response.data[fund.id] ?? 0;
 							}
-						} catch (err) {
+						}).catch(err => {
 							alert("Failed to fetch fund balances");
-							this.startFlying = false;
-						}
+							console.error(err);
+						}));
 
-						this.startFlying = false;
-						if (this.startFlyAgain) {
-							this.startFlyAgain = false;
-							this.updateFundBalances();
+						promises.push(axios(`/p/_carryover?new_start=${this.start}&exclude=` +
+							{{ Js::from($period->id) }}).then(response => {
+							this.incomes.forEach(income => {
+								if (income.id != 'carryover') return;
+								income.amount = response.data;
+							});
+						}).catch(err => {
+							alert("Failed to fetch carryover");
+							console.error(err);
+						}));
+
+						await Promise.all(promises);
+
+						this.asynchronousDataFlying = false;
+						if (this.asynchronousDataFlyAgain) {
+							this.asynchronousDataFlyAgain = false;
+							this.updateAsynchronousData();
 						}
 					},
 					surplus: function() {
 						return 0 +
-							this.incomes.reduce((acc, income) => acc + parseInt("0" + income.amount), 0) -
-							this.budgets.reduce((acc, budget) => acc + parseInt("0" + budget.amount), 0) -
+							this.incomes.reduce((acc, income) => acc + parseInt("0" + income
+								.amount), 0) -
+							this.budgets.reduce((acc, budget) => acc + parseInt("0" + budget
+								.amount), 0) -
 							this.funds.reduce((acc, fund) => acc + parseInt("0" + fund.amount), 0);
 					},
 					saveButtonText: function() {

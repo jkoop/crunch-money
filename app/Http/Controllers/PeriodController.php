@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ImpossibleStateException;
 use App\Models\Budget;
 use App\Models\Fund;
 use App\Models\Income;
@@ -11,12 +12,28 @@ use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 final class PeriodController extends Controller {
+	public function carryover(Request $request): Response {
+		$request->validate([
+			"new_start" => "required|date",
+		]);
+
+		return response(
+			(new Period(["owner_id" => Auth::id(), "start" => $request->new_start]))->getCarryoverAttribute(
+				excludePeriod: $request->exclude,
+			),
+			headers: [
+				"Content-Type" => "application/json",
+			],
+		);
+	}
+
 	public function get(Request $request, string $start_date = "new") {
 		if ($start_date == "new") {
 			$slug = "new";
