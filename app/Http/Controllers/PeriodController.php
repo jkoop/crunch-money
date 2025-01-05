@@ -24,9 +24,14 @@ final class PeriodController extends Controller {
 			"new_start" => "required|date",
 		]);
 
+		$exclude = $request->exclude;
+		if ($exclude == "null") {
+			$exclude = null;
+		}
+
 		return response(
 			(new Period(["owner_id" => Auth::id(), "start" => $request->new_start]))->getCarryoverAttribute(
-				excludePeriod: $request->exclude,
+				excludePeriod: $exclude,
 			),
 			headers: [
 				"Content-Type" => "application/json",
@@ -309,7 +314,10 @@ final class PeriodController extends Controller {
 					]);
 				}
 
-				$existingFund->periods()->attach($period->id);
+				try {
+					$existingFund->periods()->attach($period->id);
+				} catch (UniqueConstraintViolationException $e) {
+				}
 
 				$existingTransaction = Transaction::withoutGlobalScope(PeriodScope::class)
 					->where("fund_id", $existingFund->id)
