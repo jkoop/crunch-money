@@ -42,15 +42,14 @@ final class PeriodController extends Controller {
 	public function get(Request $request, string $start_date = "new") {
 		if ($start_date == "new") {
 			$slug = "new";
-			$latestPeriod = Period::orderByDesc("start")->first() ?? throw new ImpossibleStateException();
-			$oldStart = $latestPeriod->start;
-			$oldEnd = $latestPeriod->end;
+			$period =
+				Period::orderByDesc("start")->with("incomes", "budgets", "funds")->first() ??
+				throw new ImpossibleStateException();
+			$oldStart = $period->start;
+			$oldEnd = $period->end;
 			$oldDuration = round($oldStart->diffInDays($oldEnd));
-			$period = new Period([
-				"owner_id" => Auth::id(),
-				"start" => (clone $oldEnd)->addDay(),
-				"end" => (clone $oldEnd)->addDays($oldDuration),
-			]);
+			$period->start = (clone $oldEnd)->addDay();
+			$period->end = (clone $oldEnd)->addDays($oldDuration);
 		} else {
 			$slug = $start_date;
 			$period = Period::where("start", $start_date)->firstOrFail();
@@ -83,6 +82,10 @@ final class PeriodController extends Controller {
 					"amount" => $fund->transactions->first()?->amount ?? 0,
 				],
 			);
+
+		if ($start_date == "new") {
+			$period->id = null;
+		}
 
 		return view("periods.edit", compact("period", "budgets", "funds", "slug"));
 	}

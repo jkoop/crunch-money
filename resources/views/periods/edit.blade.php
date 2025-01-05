@@ -101,7 +101,7 @@
 		</table>
 
 		<button type="submit" x-text="saveButtonText()"
-			x-bind:disabled="incomes.length == 0 || budgets.length == 0 || funds.length == 0 || surplus() != 0"></button>
+			x-bind:disabled="incomes.length == 0 || budgets.length == 0 || funds.length == 0 || surplus() != 0 || asynchronousDataFlying"></button>
 		<span x-bind:class="{ 'bg-green-500': surplus() > 0, 'bg-red-500': surplus() < 0 }">Surplus: <span
 				x-text="Math.round(surplus() * 100) / 100"></span></span>
 	</form>
@@ -115,7 +115,6 @@
 					name: "carryover from last period",
 					amount: {{ Js::from($period->carryover) }},
 				});
-
 
 				return {
 					init: function() {
