@@ -3,6 +3,13 @@
 
 @section('content')
 	<a href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit period</a>
+
+	<form>
+		<label>
+			<input name="all" type="checkbox" onchange="this.form.submit()" @checked($showAll) /> Show all
+		</label>
+	</form>
+
 	<table>
 		<thead>
 			<tr>
