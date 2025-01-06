@@ -25,7 +25,7 @@ final class Fund extends Model {
 	}
 
 	public function periods(): BelongsToMany {
-		return $this->belongsToMany(Period::class);
+		return $this->belongsToMany(Period::class)->withPivot("amount");
 	}
 
 	public function getBalanceAttribute(): float {

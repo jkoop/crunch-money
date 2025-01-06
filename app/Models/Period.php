@@ -38,7 +38,9 @@ final class Period extends Model {
 	}
 
 	public function funds() {
-		return $this->belongsToMany(Fund::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->belongsToMany(Fund::class)
+			->withoutGlobalScope(PeriodScope::class)
+			->withPivot("amount");
 	}
 
 	public static function current(): Period {

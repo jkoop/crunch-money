@@ -9,13 +9,13 @@ use App\Models\Income;
 use App\Models\Period;
 use App\Models\Scopes\PeriodScope;
 use App\Models\Transaction;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final class PeriodController extends Controller {
@@ -55,33 +55,21 @@ final class PeriodController extends Controller {
 			$period = Period::where("start", $start_date)->firstOrFail();
 		}
 
-		$budgets = $period
-			->budgets()
-			->with("transactions", function (HasMany $builder) use ($period): void {
-				$builder->where("period_id", $period->id);
-			})
-			->get()
-			->map(
-				fn(Budget $budget) => [
-					"id" => $budget->id,
-					"name" => $budget->name,
-					"amount" => $budget->transactions->where("period_id", $period->id)->first()?->amount,
-				],
-			);
+		$budgets = $period->budgets()->get()->map(
+			fn(Budget $budget) => [
+				"id" => $budget->id,
+				"name" => $budget->name,
+				"amount" => $budget->amount,
+			],
+		);
 
-		$funds = $period
-			->funds()
-			->with("transactions", function (HasMany $builder) use ($period): void {
-				$builder->where("period_id", $period->id);
-			})
-			->get()
-			->map(
-				fn(Fund $fund) => [
-					"id" => $fund->id,
-					"name" => $fund->name,
-					"amount" => $fund->transactions->first()?->amount ?? 0,
-				],
-			);
+		$funds = $period->funds()->get()->map(
+			fn(Fund $fund) => [
+				"id" => $fund->id,
+				"name" => $fund->name,
+				"amount" => $fund->pivot->amount,
+			],
+		);
 
 		if ($start_date == "new") {
 			$period->id = null;
@@ -106,10 +94,10 @@ final class PeriodController extends Controller {
 				"incomes.*.amount" => "required|numeric|min:0",
 				"budgets" => "required|array|min:1",
 				"budgets.*.name" => "required|string|max:255",
-				"budgets.*.amount" => "required|numeric|min:0",
+				"budgets.*.amount" => "required|string|max:255|regex:/^\d+(\.\d{1,2})?%?$/",
 				"funds" => "required|array|min:1",
 				"funds.*.name" => "required|string|max:255",
-				"funds.*.amount" => "required|numeric",
+				"funds.*.amount" => "required|string|max:255|regex:/^-?\d+(\.\d{1,2})?%?$/",
 			]);
 
 			$period->start = $request->start;
@@ -194,6 +182,7 @@ final class PeriodController extends Controller {
 								"period_id" => $period->id,
 								"name" => $budget["name"],
 								"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
+								"amount" => $budget["amount"],
 							]);
 							break;
 						} catch (UniqueConstraintViolationException $e) {
@@ -226,6 +215,7 @@ final class PeriodController extends Controller {
 							$existingBudget->update([
 								"name" => $budget["name"],
 								"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
+								"amount" => $budget["amount"],
 							]);
 							break;
 						} catch (UniqueConstraintViolationException $e) {
@@ -249,14 +239,15 @@ final class PeriodController extends Controller {
 						"owner_id" => Auth::id(),
 						"period_id" => $period->id,
 						"budget_id" => $existingBudget->id,
-						"amount" => $budget["amount"],
+						"amount" => self::amountOfIncome($budget["amount"], $period),
 						"description" => "deposit via period",
 						"is_system" => true,
-						"date" => "0001-01-01",
+						"date" => $request->start,
 					]);
 				} else {
 					$existingTransaction->update([
-						"amount" => $budget["amount"],
+						"amount" => self::amountOfIncome($budget["amount"], $period),
+						"date" => $request->start,
 					]);
 				}
 			}
@@ -318,8 +309,13 @@ final class PeriodController extends Controller {
 				}
 
 				try {
-					$existingFund->periods()->attach($period->id);
+					$existingFund->periods()->attach($period->id, ["amount" => $fund["amount"]]);
 				} catch (UniqueConstraintViolationException $e) {
+					// I'm not a huge fan of this
+					DB::transaction(function () use ($existingFund, $period, $fund) {
+						$existingFund->periods()->detach($period->id);
+						$existingFund->periods()->attach($period->id, ["amount" => $fund["amount"]]);
+					});
 				}
 
 				$existingTransaction = Transaction::withoutGlobalScope(PeriodScope::class)
@@ -332,19 +328,32 @@ final class PeriodController extends Controller {
 						"owner_id" => Auth::id(),
 						"period_id" => $period->id,
 						"fund_id" => $existingFund->id,
-						"amount" => $fund["amount"],
+						"amount" => self::amountOfIncome($fund["amount"], $period),
 						"description" => $fund["amount"] > 0 ? "deposit via period" : "withdrawal via period",
 						"is_system" => true,
-						"date" => "0001-01-01",
+						"date" => $request->start,
 					]);
 				} else {
 					$existingTransaction->update([
-						"amount" => $fund["amount"],
+						"amount" => self::amountOfIncome($fund["amount"], $period),
+						"date" => $request->start,
 					]);
 				}
 			}
 
 			return redirect()->route("periods")->with("warnings", $warnings);
 		});
+	}
+
+	private static function amountOfIncome(string $amount, Period $period): float {
+		$wasPercentage = Str::endsWith($amount, "%");
+		$amount = Str::replace("%", "", $amount);
+		$amount = (float) $amount;
+		if ($wasPercentage) {
+			$incomes = $period->incomes()->get();
+			$totalIncome = $incomes->sum("amount");
+			return round(($amount / 100) * $totalIncome, 2);
+		}
+		return round($amount, 2);
 	}
 }
