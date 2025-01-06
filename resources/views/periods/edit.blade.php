@@ -177,11 +177,15 @@
 					},
 					surplus: function() {
 						return 0 +
-							this.incomes.reduce((acc, income) => acc + parseInt("0" + income
-								.amount), 0) -
-							this.budgets.reduce((acc, budget) => acc + parseInt("0" + budget
-								.amount), 0) -
-							this.funds.reduce((acc, fund) => acc + parseInt("0" + fund.amount), 0);
+							this.incomes.reduce((acc, income) => acc + parseInt(
+								"0" + income.amount
+							), 0) -
+							this.budgets.reduce((acc, budget) => acc + parseInt(
+								"0" + budget.amount
+							), 0) -
+							this.funds.reduce((acc, fund) => acc + parseInt(
+								(fund.amount[0] == '-' ? '-' : '') + "0" + fund.amount.replace('-', '')
+							), 0);
 					},
 					saveButtonText: function() {
 						if (this.incomes.length < 1) return "You must have at least one income";
