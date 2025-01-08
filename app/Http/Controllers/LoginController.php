@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
 final class LoginController extends Controller {
@@ -20,18 +21,16 @@ final class LoginController extends Controller {
 		$user = User::where("token", $request->token)->first();
 
 		if ($user == null) {
-			return redirect()
-				->route("login")
-				->withErrors(["Invalid token"]);
+			return Redirect::to("/login")->withErrors(["Invalid token"]);
 		}
 
 		Auth::login($user);
-		return redirect()->route("dashboard");
+		return redirect()->intended("/b");
 	}
 
 	public function logout() {
 		Auth::logout();
 		Session::invalidate();
-		return redirect()->route("login");
+		return Redirect::to("/login");
 	}
 }

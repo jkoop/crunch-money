@@ -26,7 +26,7 @@ final class TransactionsController extends Controller {
 		$negate = $request->negate ?? false;
 
 		Transaction::create([
-			"owner_id" => Auth::id(),
+			"owner_id" => Auth::user()->id,
 			"budget_id" => $request->budget_id,
 			"period_id" => Period::current()->id,
 			"date" => $request->date,

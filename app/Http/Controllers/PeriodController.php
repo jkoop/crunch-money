@@ -30,7 +30,7 @@ final class PeriodController extends Controller {
 		}
 
 		return response(
-			(new Period(["owner_id" => Auth::id(), "start" => $request->new_start]))->getCarryoverAttribute(
+			(new Period(["owner_id" => Auth::user()->id, "start" => $request->new_start]))->getCarryoverAttribute(
 				excludePeriod: $exclude,
 			),
 			headers: [
@@ -79,9 +79,9 @@ final class PeriodController extends Controller {
 	}
 
 	public function post(Request $request, string $start_date) {
-		return Cache::lock("user:" . Auth::id())->block(5, function () use ($request, $start_date) {
+		return Cache::lock("user:" . Auth::user()->id)->block(5, function () use ($request, $start_date) {
 			if ($start_date == "new") {
-				$period = new Period(["owner_id" => Auth::id()]);
+				$period = new Period(["owner_id" => Auth::user()->id]);
 			} else {
 				$period = Period::where("start", $start_date)->firstOrFail();
 			}
@@ -121,7 +121,7 @@ final class PeriodController extends Controller {
 				$existingIncome = Income::withoutGlobalScope(PeriodScope::class)->find($income["id"]);
 				if ($existingIncome == null || $existingIncome->period_id != $period->id) {
 					Income::create([
-						"owner_id" => Auth::id(),
+						"owner_id" => Auth::user()->id,
 						"period_id" => $period->id,
 						"name" => $income["name"],
 						"amount" => $income["amount"],
@@ -178,7 +178,7 @@ final class PeriodController extends Controller {
 					while (true) {
 						try {
 							$existingBudget = Budget::create([
-								"owner_id" => Auth::id(),
+								"owner_id" => Auth::user()->id,
 								"period_id" => $period->id,
 								"name" => $budget["name"],
 								"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
@@ -236,7 +236,7 @@ final class PeriodController extends Controller {
 					->first();
 				if ($existingTransaction == null) {
 					Transaction::create([
-						"owner_id" => Auth::id(),
+						"owner_id" => Auth::user()->id,
 						"period_id" => $period->id,
 						"budget_id" => $existingBudget->id,
 						"amount" => self::amountOfIncome($budget["amount"], $period),
@@ -295,7 +295,7 @@ final class PeriodController extends Controller {
 
 					if ($existingFund == null) {
 						$existingFund = Fund::create([
-							"owner_id" => Auth::id(),
+							"owner_id" => Auth::user()->id,
 							"name" => $fund["name"],
 							"slug" => $slug,
 						]);
@@ -325,7 +325,7 @@ final class PeriodController extends Controller {
 
 				if ($existingTransaction == null) {
 					Transaction::create([
-						"owner_id" => Auth::id(),
+						"owner_id" => Auth::user()->id,
 						"period_id" => $period->id,
 						"fund_id" => $existingFund->id,
 						"amount" => self::amountOfIncome($fund["amount"], $period),

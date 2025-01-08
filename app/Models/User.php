@@ -2,19 +2,58 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable {
-	/** @use HasFactory<\Database\Factories\UserFactory> */
-	use HasFactory, Notifiable;
-
 	protected $guarded = [];
-	protected $hidden = ["token", "remember_token"];
+	protected $hidden = ["token"];
 
-	protected function casts(): array {
-		return [];
+	protected $casts = [
+		"is_admin" => "boolean",
+	];
+
+	/**
+	 * The column name that identifies the user in the database for the purpose of authentication and only for that purpose.
+	 * @return string
+	 */
+	public function getAuthIdentifierName(): string {
+		return "token";
+	}
+
+	public function budgets(): HasMany {
+		return $this->hasMany(Budget::class, "owner_id")->withoutGlobalScopes();
+	}
+
+	public function funds(): HasMany {
+		return $this->hasMany(Fund::class, "owner_id")->withoutGlobalScopes();
+	}
+
+	public function transactions(): HasMany {
+		return $this->hasMany(Transaction::class, "owner_id")->withoutGlobalScopes();
+	}
+
+	public function periods(): HasMany {
+		return $this->hasMany(Period::class, "owner_id")->withoutGlobalScopes();
+	}
+
+	/**
+	 * For display, not logic
+	 * @return string
+	 */
+	public function getTypeAttribute(): string {
+		if ($this->is_admin) {
+			return "admin";
+		} else {
+			return "basic";
+		}
+	}
+
+	/**
+	 * Generates a new token for the user.
+	 * @return void
+	 */
+	public function regenerateToken(): void {
+		$this->token = substr(base64_encode($this->id . ":" . random_bytes(24)), 0, 32);
 	}
 }

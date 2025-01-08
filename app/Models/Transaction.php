@@ -24,7 +24,7 @@ final class Transaction extends Model {
 	}
 
 	public function budget() {
-		return $this->belongsTo(Budget::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->belongsTo(Budget::class)->withoutGlobalScopes();
 	}
 
 	public function fund() {

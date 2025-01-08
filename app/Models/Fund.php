@@ -21,7 +21,7 @@ final class Fund extends Model {
 	}
 
 	public function transactions(): HasMany {
-		return $this->hasMany(Transaction::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->hasMany(Transaction::class)->withoutGlobalScopes();
 	}
 
 	public function periods(): BelongsToMany {

@@ -19,11 +19,11 @@ final class Budget extends Model {
 	}
 
 	public function period() {
-		return $this->belongsTo(Period::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->belongsTo(Period::class)->withoutGlobalScopes();
 	}
 
 	public function transactions() {
-		return $this->hasMany(Transaction::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->hasMany(Transaction::class)->withoutGlobalScopes();
 	}
 
 	public function getBalanceAttribute() {

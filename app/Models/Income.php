@@ -17,6 +17,6 @@ final class Income extends Model {
 	}
 
 	public function period() {
-		return $this->belongsTo(Period::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->belongsTo(Period::class)->withoutGlobalScopes();
 	}
 }

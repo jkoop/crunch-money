@@ -40,7 +40,7 @@ final class BudgetController extends Controller {
 					]);
 				} else {
 					Budget::create([
-						"owner_id" => Auth::id(),
+						"owner_id" => Auth::user()->id,
 						"name" => $request->name,
 						"slug" => $slug . $counter, // this is too clever: the counter is negative, causing a dash in the slug
 					]);

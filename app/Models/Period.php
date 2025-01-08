@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Casts\Date;
 use App\Models\Scopes\OwnedScope;
-use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -26,20 +25,20 @@ final class Period extends Model {
 	}
 
 	public function incomes() {
-		return $this->hasMany(Income::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->hasMany(Income::class)->withoutGlobalScopes();
 	}
 
 	public function transactions() {
-		return $this->hasMany(Transaction::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->hasMany(Transaction::class)->withoutGlobalScopes();
 	}
 
 	public function budgets() {
-		return $this->hasMany(Budget::class)->withoutGlobalScope(PeriodScope::class);
+		return $this->hasMany(Budget::class)->withoutGlobalScopes();
 	}
 
 	public function funds() {
 		return $this->belongsToMany(Fund::class)
-			->withoutGlobalScope(PeriodScope::class)
+			->withoutGlobalScopes()
 			->withPivot("amount");
 	}
 
@@ -62,7 +61,7 @@ final class Period extends Model {
 			}
 
 			$period = Period::create([
-				"owner_id" => Auth::id(),
+				"owner_id" => Auth::user()->id,
 				"start" => (clone $now)->startOfMonth(),
 				"end" => (clone $now)->endOfMonth(),
 			]);
