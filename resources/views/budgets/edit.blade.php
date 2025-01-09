@@ -17,7 +17,12 @@
 		@csrf
 		<input name="negate" type="hidden" value="1" />
 		<input name="budget_id" type="hidden" value="{{ $budget->id }}" />
-		<input name="date" type="date" value="{{ now()->format('Y-m-d') }}" required />
+		<input name="date" type="date" required />
+		<script>
+			window.addEventListener("js-ready", () => {
+				document.querySelector('input[name="date"]').value = getToday();
+			});
+		</script>
 		<input name="amount" type="number" style="width: 100px;" step="0.01" required autofocus
 			placeholder="withdraw amount" />
 		<input name="description" type="text" required placeholder="description" maxlength="255" />
