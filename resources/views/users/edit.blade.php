@@ -4,41 +4,35 @@
 @section('content')
 	<form method="post">
 		@csrf
-		<table>
-			<tbody>
-				<tr>
-					<th>Name</th>
-					<td><input name="name" type="text" value="{{ old('name', $user->name) }}" maxlength="255" /></td>
-				</tr>
-				<tr>
-					<th>Token</th>
-					<td>
-						<label><input name="regenerate_token" type="checkbox" @checked($user->id == null) @disabled($user->id == null) />
-							Regenerate </label>
-						Will log out the user of all devices.
-					</td>
-				</tr>
-				<tr>
-					<th>Notes</th>
-					<td>
-						<textarea name="notes" maxlength="65535">{{ $user->notes }}</textarea>
-						Not shown to the user; for your convenience.
-					</td>
-				</tr>
-				<tr>
-					<th>Type</th>
-					<td><select name="type">
-							<option @selected(old('type', $user->type) == 'admin')>admin</option>
-							<option @selected(old('type', $user->type) == 'basic')>basic</option>
-						</select></td>
-				</tr>
-			</tbody>
-		</table>
+		<label class="mb-4 block">
+			Name
+			<input name="name" type="text" value="{{ old('name', $user->name) }}" maxlength="255" />
+		</label>
+
+		<label class="block">
+			<input name="regenerate_token" type="checkbox" @checked($user->id == null) @disabled($user->id == null) />
+			Regenerate Token
+		</label>
+		<p class="mb-4 text-sm text-gray-400">This will log out the user of all devices.</p>
+
+		<label>
+			Notes<br>
+			<textarea name="notes" maxlength="65535">{{ $user->notes }}</textarea>
+		</label>
+		<p class="mb-4 text-sm text-gray-400">Not shown to the user; for your convenience.</p>
+
+		<label class="my-4 block">
+			Type
+			<select name="type">
+				<option @selected(old('type', $user->type) == 'admin')>admin</option>
+				<option @selected(old('type', $user->type) == 'basic')>basic</option>
+			</select>
+		</label>
 
 		<button type="submit">Save</button>
 
 		@if ($user->id != null)
-			<button name="delete" type="submit" value="1">Delete</button>
+			<button name="delete" type="submit" value="1" onclick="return confirm('Are you sure?')">Delete</button>
 		@endif
 	</form>
 @endsection

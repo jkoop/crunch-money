@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Budget;
-use Illuminate\Http\Request;
 
 final class BudgetsController extends Controller {
 	public function get() {

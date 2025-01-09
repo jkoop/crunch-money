@@ -4,9 +4,12 @@
 @section('content')
 	<form action="{{ route('funds.post', ['slug' => $fund?->slug ?? 'new']) }}" method="post">
 		@csrf
-		<label for="name">Name</label>
-		<input name="name" type="text" value="{{ old('name', $fund?->name) }}" required maxlength="255" />
-		<button type="submit">Save</button>
+		<fieldset>
+			<legend>Fund</legend>
+			<label for="name">Name</label>
+			<input name="name" type="text" value="{{ old('name', $fund?->name) }}" required maxlength="255" />
+			<button type="submit">Save</button>
+		</fieldset>
 	</form>
 
 	<h2>Transactions</h2>
@@ -23,7 +26,7 @@
 			@foreach ($fund->transactions()->orderByDesc('date')->get() as $transaction)
 				<tr>
 					<td>{{ $transaction->date->format('Y-m-d') }}</td>
-					<td>{{ $transaction->amount }}</td>
+					<td class="number">{{ $transaction->amount }}</td>
 					<td>{{ $transaction->getDescription() }}</td>
 				</tr>
 			@endforeach

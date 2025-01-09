@@ -3,7 +3,8 @@
 
 @section('content')
 	<a href="/p/new">New period</a>
-	<table>
+
+	<table class="my-4">
 		<thead>
 			<tr>
 				<th>Start date</th>

@@ -7,7 +7,7 @@
 			<li>
 				<b>{{ ucfirst($subject) }}:</b>
 				@foreach ($details as $name => $value)
-					{{ $value }} {{ $name }}{{ $loop->last ? '' : ',' }}
+					<span class="number">{{ $value }}</span> {{ $name }}{{ $loop->last ? '' : ',' }}
 				@endforeach
 			</li>
 		@endforeach

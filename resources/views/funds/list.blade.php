@@ -2,9 +2,7 @@
 @section('title', 'Funds')
 
 @section('content')
-	<a href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit period</a>
-
-	<form>
+	<form class="mb-4">
 		<label>
 			<input name="all" type="checkbox" onchange="this.form.submit()" @checked($showAll) /> Show all
 		</label>
@@ -26,7 +24,7 @@
 			@foreach ($funds as $fund)
 				<tr>
 					<td><a href="/f/{{ $fund->slug }}">{{ $fund->name }}</a></td>
-					<td class="text-right">{{ $fund->balance }}</td>
+					<td class="number">{{ $fund->balance }}</td>
 				</tr>
 			@endforeach
 		</tbody>

@@ -3,7 +3,7 @@
 
 @section('content')
 	<a href="/u/new">New user</a>
-	<table>
+	<table class="my-4">
 		<thead>
 			<tr>
 				<th>User</th>
@@ -19,12 +19,12 @@
 			@foreach (App\Models\User::orderBy('name')->get() as $user)
 				<tr>
 					<td><a href="{{ route('users.get', $user) }}">{{ $user->name }}</a></td>
-					<td class="text-right">{{ $user->budgets()->count() }}</td>
-					<td class="text-right">{{ $user->funds()->count() }}</td>
-					<td class="text-right">{{ $user->transactions()->count() }}</td>
-					<td class="text-right">{{ $user->periods()->count() }}</td>
+					<td class="number">{{ $user->budgets()->count() }}</td>
+					<td class="number">{{ $user->funds()->count() }}</td>
+					<td class="number">{{ $user->transactions()->count() }}</td>
+					<td class="number">{{ $user->periods()->count() }}</td>
 					<td>{{ $user->type }}</td>
-					<td>{{ $user->notes }}</td>
+					<td>{{ explode("\n", $user->notes)[0] }}</td>
 				</tr>
 			@endforeach
 		</tbody>

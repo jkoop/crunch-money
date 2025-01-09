@@ -1,6 +1,126 @@
-/* @tailwind base; */
+@import url("figtree.css");
+
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* *::-webkit-scrollbar {
+	display: none;
+} */
+
+html {
+	@apply bg-gray-950 xl:w-[1280px] xl:mx-auto;
+}
+
+body {
+	@apply m-0 p-0 flex flex-col min-h-screen bg-gray-900 font-sans text-white antialiased;
+}
+
+nav {
+	@apply bg-gray-800;
+}
+
+nav a {
+	@apply no-underline;
+}
+
+#period-picker-container {
+	@apply flex flex-row items-center justify-end gap-2 pt-2 px-2;
+}
+
+#period-picker-container a {
+	@apply text-gray-400 hover:text-white hover:underline;
+}
+
+nav > div:last-of-type {
+	@apply flex flex-row items-center overflow-x-auto;
+}
+
+nav > div:last-of-type > a {
+	@apply p-2 text-white hover:text-black hover:!bg-white hover:no-underline;
+}
+
+nav > div:last-of-type > a.current {
+	@apply bg-gray-500;
+}
+
+nav > div:last-of-type #period-picker-container {
+	@apply py-0;
+}
+
+main {
+	@apply my-4 mx-2 flex-grow;
+}
+
+h2 {
+	@apply text-xl font-bold my-4;
+	line-height: 1;
+}
+
+a {
+	@apply text-white no-underline hover:underline;
+}
+
+fieldset {
+	@apply border-gray-400 border-2 p-4 pt-2 rounded-md max-w-fit mb-4;
+}
+
+fieldset legend {
+	@apply px-2;
+}
+
+table {
+	@apply border-collapse overflow-x-auto max-w-full block;
+}
+
+table th,
+table td {
+	@apply p-2;
+}
+
+table thead tr:nth-of-type(odd),
+table tbody tr:nth-of-type(even) {
+	@apply bg-gray-800;
+}
+
+button,
+input,
+select,
+textarea {
+	@apply border-solid accent-gray-500 rounded-md border border-gray-700 bg-gray-800 p-2 py-1 text-white hover:enabled:bg-gray-700 disabled:text-gray-300 disabled:bg-transparent disabled:cursor-not-allowed text-xs;
+	color-scheme: dark;
+}
+
+button,
+select {
+	@apply cursor-pointer;
+}
+
+textarea {
+	@apply resize-y w-full h-24 text-base;
+}
+
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	padding-right: 24px;
+	background-image: url("data:image/svg+xml,<svg width='10' height='10' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='m0,6l12,12l12,-12l-24,0z' fill='white'/></svg>");
+	background-repeat: no-repeat;
+	background-position: center right 8px;
+}
+
+footer {
+	@apply bg-gray-800 p-2 flex flex-row gap-4 text-sm;
+}
+
+footer a {
+	@apply text-gray-400 hover:text-white no-underline hover:underline;
+}
+
+.number {
+	@apply text-right;
+	font-feature-settings: "tnum";
+}
 
 [x-cloak] {
 	display: none;

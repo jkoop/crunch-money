@@ -1,5 +1,5 @@
 @if (session('error') || $errors->any())
-	<div class="mb-4 bg-red-500 p-2 text-white">
+	<div class="bg-red-700 p-2 text-white">
 		{{ session('error') }}
 		@foreach ($errors->all() as $error)
 			{{ $error }}
@@ -8,15 +8,15 @@
 @endif
 
 @if (session('warnings'))
-	<div class="mb-4 bg-yellow-500 p-2 text-white">
+	<div class="bg-yellow-700 p-2 text-white">
 		@foreach (session('warnings') as $warning)
-			{{ $warning }}
+			<p class="my-0">{{ $warning }}</p>
 		@endforeach
 	</div>
 @endif
 
 @if (session('success'))
-	<div class="mb-4 bg-green-500 p-2">
+	<div class="bg-green-700 p-2">
 		{{ session('success') }}
 	</div>
 @endif

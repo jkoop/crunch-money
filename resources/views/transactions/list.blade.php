@@ -2,13 +2,12 @@
 @section('title', 'Transactions')
 
 @section('content')
-	{{-- <a href="/t/new">New transaction</a> --}}
 	<table>
 		<thead>
 			<tr>
 				<th>Date</th>
 				<th>Amount</th>
-				<th>Fund / Budget</th>
+				<th>Budget / Fund</th>
 				<th>Description</th>
 			</tr>
 		</thead>
@@ -21,7 +20,7 @@
 			@foreach ($transactions as $transaction)
 				<tr>
 					<td>{{ $transaction->date->format('Y-m-d') }}</td>
-					<td class="text-right">{{ $transaction->amount }}</td>
+					<td class="number">{{ $transaction->amount }}</td>
 					<td>
 						@if ($transaction->fund != null)
 							<a href="/f/{{ $transaction->fund->slug }}">{{ $transaction->fund->name }}</a>
