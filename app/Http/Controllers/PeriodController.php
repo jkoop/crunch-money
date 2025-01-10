@@ -186,7 +186,11 @@ final class PeriodController extends Controller {
 							]);
 							break;
 						} catch (UniqueConstraintViolationException $e) {
-							if (!Str::of($e)->contains("UNIQUE constraint failed: budgets.owner_id, budgets.slug")) {
+							if (
+								!Str::of($e)->contains(
+									"UNIQUE constraint failed: budgets.owner_id, budgets.period_id, budgets.slug",
+								)
+							) {
 								throw $e;
 							}
 							if ($counter == "") {
@@ -219,7 +223,11 @@ final class PeriodController extends Controller {
 							]);
 							break;
 						} catch (UniqueConstraintViolationException $e) {
-							if (!Str::of($e)->contains("UNIQUE constraint failed: budgets.owner_id, budgets.slug")) {
+							if (
+								!Str::of($e)->contains(
+									"UNIQUE constraint failed: budgets.owner_id, budgets.period_id, budgets.slug",
+								)
+							) {
 								throw $e;
 							}
 							if ($counter == "") {
