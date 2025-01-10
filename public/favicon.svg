@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 64 64">
+<style>@media(prefers-color-scheme:dark){rect{fill:transparent}circle{fill:#fff4}path{stroke:#fff}}</style>
+<rect x="0" y="0" width="64" height="64" fill="white"/>
+<circle cx="28" cy="23" r="14" fill="#0004"/>
+<path d="M39 14 a14 14 0 1 0 0 18 v13 h10 v10" fill="none" stroke="#000" stroke-width="9"  stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
