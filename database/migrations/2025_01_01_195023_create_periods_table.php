@@ -8,7 +8,7 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create("periods", function (Blueprint $table) {
 			$table->id();
-			$table->foreignId("owner_id")->constrained("users");
+			$table->foreignId("owner_id")->constrained("users")->cascadeOnDelete()->onUpdateRestrict();
 			$table->date("start");
 			$table->date("end");
 			$table->unique(["owner_id", "start"]);

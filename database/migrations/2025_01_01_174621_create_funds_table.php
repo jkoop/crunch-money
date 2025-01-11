@@ -7,7 +7,7 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create("funds", function ($table) {
 			$table->id();
-			$table->foreignId("owner_id")->constrained("users");
+			$table->foreignId("owner_id")->constrained("users")->cascadeOnDelete()->onUpdateRestrict();
 			$table->string("name");
 			$table->string("slug");
 			$table->timestamps();

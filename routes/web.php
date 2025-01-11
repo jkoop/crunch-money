@@ -11,6 +11,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,3 +55,5 @@ Route::middleware("guest")->group(function () {
 	Route::get("/login", [LoginController::class, "get"])->name("login");
 	Route::post("/login", [LoginController::class, "post"]);
 });
+
+Route::delete("/downloads/{id}", [SessionController::class, "deleteDownload"])->name("downloads.delete");

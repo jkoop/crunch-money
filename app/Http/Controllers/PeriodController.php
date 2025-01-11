@@ -12,11 +12,12 @@ use App\Models\Transaction;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Symfony\Component\Uid\Ulid;
 
 final class PeriodController extends Controller {
 	public function carryover(Request $request): Response {
@@ -138,24 +139,35 @@ final class PeriodController extends Controller {
 				->pluck("id")
 				->toArray();
 
-			foreach (
-				Budget::withTrashed()
-					->where("period_id", $period->id)
-					->get()
-				as $budget
-			) {
+			$csv = fopen("php://memory", "rw");
+			fputcsv($csv, ["Date", "Budget", "Amount", "Description"]);
+
+			foreach ($period->budgets()->get() as $budget) {
 				if (!in_array($budget->id, $budgetIds)) {
-					$budget->update([
-						"deleted_at" => Carbon::createFromTimestamp(
-							min(
-								Carbon::now()->timestamp,
-								$period->end->timestamp,
-								$budget->deleted_at?->timestamp ?? PHP_INT_MAX,
-							),
-						),
-					]);
+					$budget
+						->transactions()
+						->where("is_system", false)
+						->get()
+						->map(
+							fn($transaction) => fputcsv($csv, [
+								$transaction->date->format("Y-m-d"),
+								$budget->name,
+								$transaction->amount,
+								$transaction->description,
+							]),
+						);
+					$budget->delete();
 				}
 			}
+
+			rewind($csv);
+			$csv = stream_get_contents($csv);
+			Session::push("downloads", [
+				"id" => Ulid::generate(), // for identifying when deleting later
+				"name" => "deleted-transactions.csv",
+				"content" => $csv,
+			]);
+			unset($csv);
 
 			foreach ($request->budgets as $budget) {
 				// [id, name, amount]

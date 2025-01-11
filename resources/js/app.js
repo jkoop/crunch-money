@@ -35,4 +35,18 @@ function movePeriodPicker() {
 window.addEventListener("resize", movePeriodPicker);
 movePeriodPicker();
 
+if (window.downloads != undefined) {
+	window.downloads.forEach((download) => {
+		// download.content is the content of the file, not a URL
+		const url = URL.createObjectURL(new Blob([download.content]));
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = download.name;
+		link.click();
+
+		// notify the server that the download was successful
+		axios.delete(`/downloads/${download.id}`);
+	});
+}
+
 window.dispatchEvent(new Event("js-ready"));

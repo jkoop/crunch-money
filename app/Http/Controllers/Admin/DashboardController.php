@@ -39,18 +39,12 @@ final class DashboardController extends Controller {
 						->select("id"),
 				)
 				->count(),
-			"orphaned" => Budget::withoutGlobalScopes([OwnedScope::class, PeriodScope::class])
-				->whereNotIn("owner_id", User::select("id"))
-				->count(),
 			"total" => Budget::withoutGlobalScopes([OwnedScope::class, PeriodScope::class])->count(),
 		];
 	}
 
 	private function getFunds(): array {
 		return [
-			"orphaned" => Fund::withoutGlobalScope(OwnedScope::class)
-				->whereNotIn("owner_id", User::select("id"))
-				->count(),
 			"total" => Fund::withoutGlobalScope(OwnedScope::class)->count(),
 		];
 	}
@@ -66,9 +60,6 @@ final class DashboardController extends Controller {
 						->select("id"),
 				)
 				->count(),
-			"orphaned" => Transaction::withoutGlobalScopes([OwnedScope::class, PeriodScope::class])
-				->whereNotIn("owner_id", User::select("id"))
-				->count(),
 			"total" => Transaction::withoutGlobalScopes([OwnedScope::class, PeriodScope::class])->count(),
 		];
 	}
@@ -78,9 +69,6 @@ final class DashboardController extends Controller {
 			"current" => Period::withoutGlobalScope(OwnedScope::class)
 				->where("start", "<=", self::getToday())
 				->where("end", ">=", self::getToday())
-				->count(),
-			"orphaned" => Period::withoutGlobalScope(OwnedScope::class)
-				->whereNotIn("owner_id", User::select("id"))
 				->count(),
 			"total" => Period::withoutGlobalScope(OwnedScope::class)->count(),
 		];

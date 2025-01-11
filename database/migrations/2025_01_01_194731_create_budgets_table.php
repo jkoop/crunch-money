@@ -8,8 +8,8 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create("budgets", function (Blueprint $table) {
 			$table->id();
-			$table->foreignId("owner_id")->constrained("users");
-			$table->foreignId("period_id")->constrained("periods");
+			$table->foreignId("owner_id")->constrained("users")->cascadeOnDelete()->onUpdateRestrict();
+			$table->foreignId("period_id")->constrained("periods")->cascadeOnDelete()->onUpdateRestrict();
 			$table->string("name");
 			$table->string("slug");
 			$table->timestamps();

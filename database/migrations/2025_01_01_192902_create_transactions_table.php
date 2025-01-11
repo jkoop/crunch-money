@@ -8,10 +8,10 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create("transactions", function (Blueprint $table) {
 			$table->id();
-			$table->foreignId("owner_id")->constrained("users");
-			$table->foreignId("fund_id")->nullable()->constrained("funds");
-			$table->foreignId("budget_id")->nullable()->constrained("budgets");
-			$table->foreignId("period_id")->constrained("periods");
+			$table->foreignId("owner_id")->constrained("users")->cascadeOnDelete()->onUpdateRestrict();
+			$table->foreignId("fund_id")->nullable()->constrained("funds")->cascadeOnDelete()->onUpdateRestrict();
+			$table->foreignId("budget_id")->nullable()->constrained("budgets")->cascadeOnDelete()->onUpdateRestrict();
+			$table->foreignId("period_id")->constrained("periods")->cascadeOnDelete()->onUpdateRestrict();
 			$table->string("description");
 			$table->date("date");
 			$table->decimal("amount", 10, 2);
