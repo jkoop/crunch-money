@@ -34,6 +34,10 @@ nav a {
 	@apply text-gray-400 hover:text-white hover:underline;
 }
 
+nav > div:first-of-type#period-picker-container {
+	@apply md:!hidden;
+}
+
 nav > div:last-of-type {
 	@apply flex flex-row items-center overflow-x-auto;
 }

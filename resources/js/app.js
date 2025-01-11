@@ -22,11 +22,10 @@ window.addEventListener("DOMContentLoaded", () => {
 function movePeriodPicker() {
 	const periodPickerContainer = document.getElementById("period-picker-container");
 	const spacers = document.querySelectorAll("nav > div:last-of-type > span.flex-grow");
-	const totalSpacerWidth = [...spacers].reduce((acc, spacer) => acc + spacer.offsetWidth, 0);
+	if (periodPickerContainer == null) return; // admin layout doesn't have this
 
-	if (periodPickerContainer == null) return;
-
-	if (window.innerWidth >= 800) {
+	// md breakpoint
+	if (window.innerWidth >= 768) {
 		spacers[0].after(periodPickerContainer);
 	} else {
 		spacers[0].closest("div").before(periodPickerContainer);
