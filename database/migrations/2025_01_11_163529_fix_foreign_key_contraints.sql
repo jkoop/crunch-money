@@ -37,6 +37,17 @@ INSERT INTO "_new_funds" SELECT * FROM "funds";
 DROP TABLE "funds";
 ALTER TABLE "_new_funds" RENAME TO "funds";
 
+CREATE TABLE "_new_fund_period" (
+	"fund_id" integer not null references "funds" ("id") on delete cascade on update restrict,
+	"period_id" integer not null references "periods" ("id") on delete cascade on update restrict,
+	"amount" varchar not null,
+	PRIMARY KEY ("fund_id", "period_id")
+);
+
+INSERT INTO "_new_fund_period" SELECT * FROM "fund_period";
+DROP TABLE "fund_period";
+ALTER TABLE "_new_fund_period" RENAME TO "fund_period";
+
 CREATE TABLE "_new_incomes" (
 	"id" integer primary key autoincrement not null,
 	"owner_id" integer not null references "users" ("id") on delete cascade on update restrict,
