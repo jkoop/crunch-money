@@ -5,10 +5,10 @@
 	<script>
 		window.period = {
 			id: {{ Js::from($period->id) }},
-			incomes: {{ Js::from($period->incomes) }},
+			incomes: {{ Js::from($period->incomes->sortBy('name')->values()) }},
 			carryover: {{ Js::from($period->carryover) }},
-			budgets: {{ Js::from($budgets) }},
-			funds: {{ Js::from($funds) }},
+			budgets: {{ Js::from($budgets->sortBy('name')->values()) }},
+			funds: {{ Js::from($funds->sortBy('name')->values()) }},
 			start: {{ Js::from($period->start->format('Y-m-d')) }},
 			end: {{ Js::from($period->end->format('Y-m-d')) }},
 		};

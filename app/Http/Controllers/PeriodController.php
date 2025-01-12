@@ -162,11 +162,13 @@ final class PeriodController extends Controller {
 
 			rewind($csv);
 			$csv = stream_get_contents($csv);
-			Session::push("downloads", [
-				"id" => Ulid::generate(), // for identifying when deleting later
-				"name" => "deleted-transactions.csv",
-				"content" => $csv,
-			]);
+			if (str_contains(trim($csv), "\n")) {
+				Session::push("downloads", [
+					"id" => Ulid::generate(), // for identifying when deleting later
+					"name" => "deleted-transactions.csv",
+					"content" => $csv,
+				]);
+			}
 			unset($csv);
 
 			foreach ($request->budgets as $budget) {
