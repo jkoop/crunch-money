@@ -84,9 +84,25 @@ table td {
 	@apply p-2;
 }
 
+table td > a {
+	@apply w-full h-full block p-2;
+}
+
+table td:has(> a) {
+	@apply p-0;
+}
+
+table tr:has(td > a:hover) td {
+	@apply bg-gray-700;
+}
+
 table thead tr:nth-of-type(odd),
 table tbody tr:nth-of-type(even) {
 	@apply bg-gray-800;
+}
+
+table tbody:has(tr:last-of-type:is(tr:nth-of-type(odd))) {
+	@apply border-b-gray-800 border-b-4;
 }
 
 button,
