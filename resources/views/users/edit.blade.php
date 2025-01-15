@@ -24,8 +24,9 @@
 		<label class="my-4 block">
 			Type
 			<select name="type">
-				<option @selected(old('type', $user->type) == 'admin')>admin</option>
-				<option @selected(old('type', $user->type) == 'basic')>basic</option>
+				<option @selected(old('type', $user->type->value) == 'admin')>admin</option>
+				<option @selected(old('type', $user->type->value) == 'basic')>basic</option>
+				<option @selected(old('type', $user->type->value) == 'demo')>demo</option>
 			</select>
 		</label>
 

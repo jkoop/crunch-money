@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\UserType;
+use App\Exceptions\ImpossibleStateException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -11,6 +13,7 @@ class User extends Authenticatable {
 
 	protected $casts = [
 		"is_admin" => "boolean",
+		"is_demo" => "boolean",
 	];
 
 	/**
@@ -37,15 +40,32 @@ class User extends Authenticatable {
 		return $this->hasMany(Period::class, "owner_id")->withoutGlobalScopes();
 	}
 
-	/**
-	 * For display, not logic
-	 * @return string
-	 */
-	public function getTypeAttribute(): string {
+	public function getTypeAttribute(): UserType {
 		if ($this->is_admin) {
-			return "admin";
-		} else {
-			return "basic";
+			return UserType::Admin;
+		} elseif ($this->is_demo) {
+			return UserType::Demo;
+		}
+
+		return UserType::Basic;
+	}
+
+	public function setTypeAttribute(UserType $type): void {
+		switch ($type) {
+			case UserType::Admin:
+				$this->is_admin = true;
+				$this->is_demo = false;
+				break;
+			case UserType::Basic:
+				$this->is_admin = false;
+				$this->is_demo = false;
+				break;
+			case UserType::Demo:
+				$this->is_admin = false;
+				$this->is_demo = true;
+				break;
+			default:
+				throw new ImpossibleStateException();
 		}
 	}
 

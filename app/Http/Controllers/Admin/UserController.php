@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exceptions\ImpossibleStateException;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ final class UserController extends Controller {
 		$request->validate([
 			"name" => "required|string|max:255",
 			"notes" => "nullable|string|max:65535",
-			"type" => "required|string|in:admin,basic",
+			"type" => "required|string|in:admin,basic,demo",
 		]);
 
 		if ($userId == "new") {
@@ -42,19 +42,11 @@ final class UserController extends Controller {
 
 		$user->name = $request->name;
 		$user->notes = $request->notes;
+		$user->type = UserType::from($request->type);
+		$user->token ??= "_" . random_bytes(24);
+		$user->save();
 
-		switch ($request->input("type")) {
-			case "admin":
-				$user->is_admin = true;
-				break;
-			case "basic":
-				$user->is_admin = false;
-				break;
-			default:
-				throw new ImpossibleStateException();
-		}
-
-		if ($request->has("regenerate_token") || $user->id == null) {
+		if ($request->has("regenerate_token") || $user->token[0] == "_") {
 			$user->regenerateToken();
 
 			if (Auth::user()->id == $user->id) {

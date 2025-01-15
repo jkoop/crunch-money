@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Session;
 
 final class LoginController extends Controller {
 	public function get() {
-		return view("login");
+		$demoUsers = User::where("is_demo", 1)->orderBy("id")->get();
+		return view("login", compact("demoUsers"));
 	}
 
 	public function post(Request $request) {

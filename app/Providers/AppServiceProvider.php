@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\UserType;
 use App\Models\User;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +40,7 @@ class AppServiceProvider extends ServiceProvider {
 		});
 
 		Gate::define("edit-profile", function (User $user) {
-			return $user->is_demo != false;
+			return $user->type != UserType::Demo;
 		});
 	}
 }
