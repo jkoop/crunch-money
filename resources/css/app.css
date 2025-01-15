@@ -84,6 +84,18 @@ table td {
 	@apply p-2;
 }
 
+table td > a {
+	@apply w-full h-full block p-2;
+}
+
+table td:has(> a) {
+	@apply p-0;
+}
+
+table tr:has(td > a:hover) td {
+	@apply bg-gray-700;
+}
+
 table thead tr:nth-of-type(odd),
 table tbody tr:nth-of-type(even) {
 	@apply bg-gray-800;

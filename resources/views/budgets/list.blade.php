@@ -5,7 +5,7 @@
 	<table>
 		<thead>
 			<tr>
-				<th>Name</th>
+				<th class="w-full">Name</th>
 				<th>Balance</th>
 			</tr>
 		</thead>
