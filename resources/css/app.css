@@ -101,6 +101,10 @@ table tbody tr:nth-of-type(even) {
 	@apply bg-gray-800;
 }
 
+table tbody:has(tr:last-of-type:is(tr:nth-of-type(odd))) {
+	@apply border-b-gray-800 border-b-4;
+}
+
 button,
 input,
 select,
