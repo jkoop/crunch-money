@@ -24,7 +24,7 @@
 			@foreach ($funds as $fund)
 				<tr>
 					<td><a href="/f/{{ $fund->slug }}">{{ $fund->name }}</a></td>
-					<td class="number">{{ $fund->balance }}</td>
+					<td class="number">@money($fund->balance)</td>
 				</tr>
 			@endforeach
 		</tbody>

@@ -14,7 +14,7 @@
 
 	<p
 		class="{{ $budget->balance < 0 ? 'bg-red-700 ' : '' }} {{ $budget->balance > 0 ? 'bg-green-700' : '' }} my-4 max-w-fit px-2 text-xl font-bold">
-		Balance: <span class="number">{{ $budget->balance }}</span>
+		Balance: <span class="number">@money($budget->balance)</span>
 	</p>
 
 	<h2>Transactions</h2>
@@ -46,7 +46,7 @@
 		@foreach ($budget->transactions()->orderBy('date', 'desc')->orderBy('id', 'desc')->get() as $transaction)
 			<tr>
 				<td>{{ $transaction->date->format('D M j Y') }}</td>
-				<td class="number">{{ $transaction->amount }}</td>
+				<td class="number">@money($transaction->amount)</td>
 				<td>{{ $transaction->getDescription() }}</td>
 			</tr>
 		@endforeach

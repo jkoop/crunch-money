@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -29,8 +30,16 @@ class AppServiceProvider extends ServiceProvider {
 				});
 		}
 
+		Blade::directive("money", function ($expression) {
+			return "<?php echo number_format($expression, 2, '.', ','); ?>";
+		});
+
 		Gate::define("admin", function (User $user) {
 			return $user->is_admin;
+		});
+
+		Gate::define("edit-profile", function (User $user) {
+			return $user->is_demo != false;
 		});
 	}
 }
