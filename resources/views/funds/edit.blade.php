@@ -26,7 +26,7 @@
 			@foreach ($fund->transactions()->orderByDesc('date')->get() as $transaction)
 				<tr>
 					<td>{{ $transaction->date->format('Y-m-d') }}</td>
-					<td class="number">{{ $transaction->amount }}</td>
+					<td class="number">@money($transaction->amount)</td>
 					<td>{{ $transaction->getDescription() }}</td>
 				</tr>
 			@endforeach

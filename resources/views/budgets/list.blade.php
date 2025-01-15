@@ -18,7 +18,7 @@
 			@foreach ($budgets as $budget)
 				<tr>
 					<td><a href="/b/{{ $budget->slug }}">{{ $budget->name }}</a></td>
-					<td class="{{ $budget->balance < 0 ? 'bg-red-700 text-white' : '' }} number">{{ $budget->balance }}</td>
+					<td class="{{ $budget->balance < 0 ? 'bg-red-700 text-white' : '' }} number">@money($budget->balance)</td>
 				</tr>
 			@endforeach
 		</tbody>

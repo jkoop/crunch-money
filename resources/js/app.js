@@ -1,8 +1,22 @@
 import "./bootstrap";
+import "./period";
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
-Alpine.start();
+
+window.money = (amount) => {
+	return new Intl.NumberFormat("en-US", {
+		style: "decimal",
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	}).format(amount);
+};
+
+window.percent = (amount) => {
+	amount = amount.replace("%", "");
+	amount = parseFloat(amount);
+	return amount + "%";
+};
 
 window.getToday = () => {
 	const date = new Date();
@@ -50,3 +64,4 @@ if (window.downloads != undefined) {
 }
 
 window.dispatchEvent(new Event("js-ready"));
+Alpine.start();

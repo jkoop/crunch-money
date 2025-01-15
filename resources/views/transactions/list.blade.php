@@ -20,7 +20,7 @@
 			@foreach ($transactions as $transaction)
 				<tr>
 					<td>{{ $transaction->date->format('Y-m-d') }}</td>
-					<td class="number">{{ $transaction->amount }}</td>
+					<td class="number">@money($transaction->amount)</td>
 					<td>
 						@if ($transaction->fund != null)
 							<a href="/f/{{ $transaction->fund->slug }}">{{ $transaction->fund->name }}</a>

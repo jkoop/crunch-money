@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
 
 final class ProfileController extends Controller {
 	public function get() {
+		if (!Gate::allows("edit-profile")) {
+			Session::push("warnings", "You are not allowed to edit your profile.");
+		}
+
 		return view("profile", [
 			"user" => Auth::user(),
 		]);
