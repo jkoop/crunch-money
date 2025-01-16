@@ -5,6 +5,9 @@ import Alpine from "alpinejs";
 window.Alpine = Alpine;
 
 window.money = (amount) => {
+	// remove all chars that aren't digits or a decimal point
+	amount = ("" + amount).replaceAll(/[^0-9\.]/g, "");
+
 	return new Intl.NumberFormat("en-US", {
 		style: "decimal",
 		minimumFractionDigits: 2,

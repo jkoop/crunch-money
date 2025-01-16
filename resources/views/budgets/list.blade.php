@@ -5,7 +5,7 @@
 	<table>
 		<thead>
 			<tr>
-				<th class="w-full">Name</th>
+				<th class="w-full md:w-fit md:min-w-96">Name</th>
 				<th>Balance</th>
 			</tr>
 		</thead>
