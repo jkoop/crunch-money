@@ -48,10 +48,10 @@
 								x-model="income.name" x-bind:disabled="income.id == 'carryover'" required />
 						</td>
 						<td><input class="number w-24" type="text"
-								title="A numerical value consisting of a whole number followed by an optional decimal point and up to two digits."
-								pattern="^\d+(\.\d{1,2})?$" x-bind:name="income.id == 'carryover' ? '' : `incomes[${index}][amount]`"
+								title="A numerical value consisting of a whole number, optionally containing commas, followed by an optional decimal point and up to two digits."
+								pattern="^[\d,]+(\.[\d,]{1,2})?$" x-bind:name="income.id == 'carryover' ? '' : `incomes[${index}][amount]`"
 								step="0.01" min="0" x-bind:disabled="income.id == 'carryover'" x-bind:value="money(income.amount)"
-								x-on:blur="income.amount = $el.value" x-on:input="updateAmountDollars()" required />
+								x-on:blur="income.amount = strToFloat($el.value)" x-on:input="updateAmountDollars()" required />
 						</td>
 						<td>
 							<button class="p-0 px-2 text-base" type="button" x-cloak
@@ -86,8 +86,8 @@
 						</td>
 						<td class="relative">
 							<input class="number w-24" type="text"
-								title="A numerical value consisting of a whole number followed by an optional decimal point and up to two digits. A percent sign (%) may follow."
-								pattern="^\d+(\.\d{1,2})?%?$" x-bind:name="`budgets[${index}][amount]`"
+								title="A numerical value consisting of a whole number, optionally containing commas, followed by an optional decimal point and up to two digits. A percent sign (%) may follow."
+								pattern="^[\d,]+(\.[\d,]{1,2})?%?$" x-bind:name="`budgets[${index}][amount]`"
 								x-bind:value="('' + budget.amount).includes('%') ? percent(budget.amount) : money(budget.amount)"
 								x-on:blur="budget.amount = $el.value" x-bind:class="{ '!text-left': ('' + budget.amountDollar).length > 0 }"
 								x-on:input="updateAmountDollar(budget, $el.value)" required />
@@ -127,8 +127,8 @@
 						</td>
 						<td class="relative">
 							<input class="number w-24" type="text"
-								title="A numerical value that may be preceded by a minus sign (indicating a negative number), consisting of a whole number followed by an optional decimal point and up to two digits. A percent sign (%) may follow."
-								x-bind:class="{ '!text-left': ('' + fund.amountDollar).length > 0 }" pattern="^-?\d+(\.\d{1,2})?%?$"
+								title="A numerical value that may be preceded by a minus sign (indicating a negative number), consisting of a whole number, optionally containing commas, followed by an optional decimal point and up to two digits. A percent sign (%) may follow."
+								x-bind:class="{ '!text-left': ('' + fund.amountDollar).length > 0 }" pattern="^-?[\d,]+(\.[\d,]{1,2})?%?$"
 								x-bind:name="`funds[${index}][amount]`"
 								x-bind:value="('' + fund.amount).includes('%') ? percent(fund.amount) : money(fund.amount)"
 								x-on:blur="fund.amount = $el.value" x-on:input="updateAmountDollar(fund, $el.value)" required />
@@ -150,7 +150,7 @@
 			<button type="submit" x-text="saveButtonText() ?? 'Save'" x-bind:disabled="saveButtonText() != null"></button>
 			<span
 				x-bind:class="{ 'bg-green-700 px-2': surplus() > 0, 'text-gray-400': surplus() == 0, 'bg-red-700 px-2': surplus() < 0 }">Surplus:
-				<span x-text="Math.round(surplus() * 100) / 100"></span></span>
+				<span x-text="money(surplus())"></span></span>
 		</div>
 	</form>
 @endsection

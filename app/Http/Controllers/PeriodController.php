@@ -92,13 +92,13 @@ final class PeriodController extends Controller {
 				"end" => "required|date|after:start",
 				"incomes" => "required|array|min:1",
 				"incomes.*.name" => "required|string|max:255",
-				"incomes.*.amount" => "required|numeric|min:0",
+				"incomes.*.amount" => "required|string|max:255|regex:/^[\d,]+(\.[\d,]{1,2})?$/",
 				"budgets" => "required|array|min:1",
 				"budgets.*.name" => "required|string|max:255",
-				"budgets.*.amount" => "required|string|max:255|regex:/^\d+(\.\d{1,2})?%?$/",
+				"budgets.*.amount" => "required|string|max:255|regex:/^[\d,]+(\.[\d,]{1,2})?%?$/",
 				"funds" => "required|array|min:1",
 				"funds.*.name" => "required|string|max:255",
-				"funds.*.amount" => "required|string|max:255|regex:/^-?\d+(\.\d{1,2})?%?$/",
+				"funds.*.amount" => "required|string|max:255|regex:/^-?[\d,]+(\.[\d,]{1,2})?%?$/",
 			]);
 
 			$period->start = $request->start;
@@ -125,12 +125,12 @@ final class PeriodController extends Controller {
 						"owner_id" => Auth::user()->id,
 						"period_id" => $period->id,
 						"name" => $income["name"],
-						"amount" => $income["amount"],
+						"amount" => self::strToFloat($income["amount"]),
 					]);
 				} else {
 					$existingIncome->update([
 						"name" => $income["name"],
-						"amount" => $income["amount"],
+						"amount" => self::strToFloat($income["amount"]),
 					]);
 				}
 			}
@@ -370,12 +370,18 @@ final class PeriodController extends Controller {
 	private static function amountOfIncome(string $amount, Period $period): float {
 		$wasPercentage = Str::endsWith($amount, "%");
 		$amount = Str::replace("%", "", $amount);
-		$amount = (float) $amount;
+		$amount = self::strToFloat($amount);
 		if ($wasPercentage) {
 			$incomes = $period->incomes()->get();
 			$totalIncome = $incomes->sum("amount");
 			return round(($amount / 100) * $totalIncome, 2);
 		}
 		return round($amount, 2);
+	}
+
+	private static function strToFloat(string $string): float {
+		$string = preg_replace("/[^0-9\.-]/", "", $string);
+		$float = (float) $string;
+		return $float;
 	}
 }

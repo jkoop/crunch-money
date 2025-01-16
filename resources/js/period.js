@@ -37,7 +37,7 @@ window.addEventListener("alpine:init", () => {
 				amount = "" + amount;
 
 				const wasPercentage = amount.endsWith("%");
-				amount = parseFloat((amount[0] == "-" ? "-" : "") + "0" + amount.replace("-", ""));
+				amount = strToFloat(amount);
 
 				if (wasPercentage) {
 					const totalIncome = this.incomes
@@ -127,10 +127,7 @@ window.addEventListener("alpine:init", () => {
 				return (
 					Math.round(
 						(0 +
-							this.incomes.reduce(
-								(acc, income) => acc + this.amountToAmountDollar(income.amount).dollar,
-								0
-							) -
+							this.incomes.reduce((acc, income) => acc + strToFloat(money(income.amount)), 0) -
 							this.budgets.reduce(
 								(acc, budget) => acc + this.amountToAmountDollar(budget.amount).dollar,
 								0

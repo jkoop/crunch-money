@@ -4,20 +4,24 @@ import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
 
-window.money = (amount) => {
-	// remove all chars that aren't digits or a decimal point
-	amount = ("" + amount).replaceAll(/[^0-9\.]/g, "");
+window.strToFloat = function (string) {
+	string = ("" + string).replaceAll(/[^0-9\.-]/g, "");
+	const float = parseFloat(string);
+	if (isNaN(float)) return 0;
+	return float;
+};
 
+window.money = (amount) => {
 	return new Intl.NumberFormat("en-US", {
 		style: "decimal",
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
-	}).format(amount);
+	}).format(strToFloat(amount));
 };
 
 window.percent = (amount) => {
 	amount = amount.replace("%", "");
-	amount = parseFloat(amount);
+	amount = strToFloat(amount);
 	return amount + "%";
 };
 
