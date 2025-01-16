@@ -294,7 +294,7 @@ final class PeriodController extends Controller {
 			 * has any non-zero transactions. if it doesn't, delete the fund. if it does,
 			 * leave it alone.
 			 */
-			foreach (Fund::withoutGlobalScope(PeriodScope::class)->get() as $fund) {
+			foreach ($period->funds as $fund) {
 				if (!in_array($fund->id, $fundIds)) {
 					$fund->periods()->detach($period->id);
 					$fund
