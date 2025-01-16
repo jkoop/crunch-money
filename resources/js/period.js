@@ -140,7 +140,7 @@ window.addEventListener("alpine:init", () => {
 
 			saveButtonText: function () {
 				if (new Date(this.start) > new Date(this.end)) return "Start date must not be after end date";
-				if (this.incomes.length < 1) return "You must have at least one income";
+				if (this.incomes.length < 2) return "You must have at least one income";
 				if (this.budgets.length < 1) return "You must have at least one budget";
 				if (this.funds.length < 1) return "You must have at least one fund";
 				if (this.surplus() != 0) return "You must have a surplus of 0";

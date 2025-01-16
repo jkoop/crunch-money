@@ -9,9 +9,11 @@ use App\Models\Income;
 use App\Models\Period;
 use App\Models\Scopes\PeriodScope;
 use App\Models\Transaction;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -103,9 +105,18 @@ final class PeriodController extends Controller {
 
 			$period->start = $request->start;
 			$period->end = $request->end;
-			$period->save();
+			self::savePeriod($period);
 
 			$warnings = [];
+
+			if ($period->start->format("Y-m-d") != $request->start) {
+				$warnings[] =
+					"The start date was already taken, so we changed it to " . $period->start->format("Y-m-d");
+			}
+
+			if ($period->end->format("Y-m-d") != $request->end) {
+				$warnings[] = "The end date was already taken, so we changed it to " . $period->end->format("Y-m-d");
+			}
 
 			$incomeIds = collect($request->incomes)
 				->pluck("id")
@@ -383,5 +394,50 @@ final class PeriodController extends Controller {
 		$string = preg_replace("/[^0-9\.-]/", "", $string);
 		$float = (float) $string;
 		return $float;
+	}
+
+	private static function savePeriod(Period $period): void {
+		do {
+			try {
+				$result = $period->save();
+			} catch (\Throwable $e) {
+				$result = $e;
+			}
+			/** @var bool|\Throwable $result */
+
+			if ($result === true) {
+				return; // success
+			} elseif ($result === false) {
+				throw new ImpossibleStateException();
+			} elseif (
+				$result instanceof QueryException &&
+				Str::of($result->getMessage())->startsWith(
+					"SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: periods.owner_id, periods.start (",
+				)
+			) {
+				// increment start date and try again
+				$period->start = Carbon::parse($period->start)
+					->addDay()
+					->format("Y-m-d");
+
+				if ($period->start == $period->end) {
+					$period->end = Carbon::parse($period->end)
+						->addDay()
+						->format("Y-m-d");
+				}
+			} elseif (
+				$result instanceof QueryException &&
+				Str::of($result->getMessage())->startsWith(
+					"SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: periods.owner_id, periods.end (",
+				)
+			) {
+				// increment end date and try again
+				$period->end = Carbon::parse($period->end)
+					->addDay()
+					->format("Y-m-d");
+			} else {
+				throw $result;
+			}
+		} while (true);
 	}
 }
