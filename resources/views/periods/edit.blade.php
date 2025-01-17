@@ -152,9 +152,11 @@
 				x-bind:class="{ 'bg-green-700 px-2': surplus() > 0, 'text-gray-400': surplus() == 0, 'bg-red-700 px-2': surplus() < 0 }">Surplus:
 				<span x-text="money(surplus())"></span></span>
 
-			<button name="delete" value="on" onclick="confirm('Are you sure you want to delete this period?')">
-				Delete
-			</button>
+			@unless ($slug == 'new')
+				<button name="delete" value="on" onclick="confirm('Are you sure you want to delete this period?')">
+					Delete
+				</button>
+			@endunless
 		</div>
 	</form>
 @endsection
