@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
@@ -87,6 +88,14 @@ final class PeriodController extends Controller {
 				$period = new Period(["owner_id" => Auth::user()->id]);
 			} else {
 				$period = Period::where("start", $start_date)->firstOrFail();
+			}
+
+			if ($period->id != null && $request->has("delete")) {
+				$period->delete();
+				Fund::withoutGlobalScope(PeriodScope::class)
+					->whereDoesntHave("periods")
+					->delete();
+				return Redirect::to("/p");
 			}
 
 			$request->validate([
@@ -374,7 +383,7 @@ final class PeriodController extends Controller {
 				}
 			}
 
-			return redirect()->route("periods")->with("warnings", $warnings);
+			return Redirect::route("periods")->with("warnings", $warnings);
 		});
 	}
 
