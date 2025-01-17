@@ -1,8 +1,10 @@
 @if (Auth::check())
 	<nav>
 		<div id="period-picker-container">
-			<a class="text-sm" href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit</a>
-			<x-period-picker />
+			@if (Str::of(Request::path())->match('#^p/\d#')->isEmpty())
+				<a class="text-sm" href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit</a>
+				<x-period-picker />
+			@endif
 		</div>
 		<div>
 			<a href="{{ route('budgets') }}">Budgets</a>
