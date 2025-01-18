@@ -51,6 +51,14 @@ class Date implements \Stringable {
 		return $year . "-" . $month . "-" . $day;
 	}
 
+	public function startOfMonth(): self {
+		return new self($this->year, $this->month, 1);
+	}
+
+	public function endOfMonth(): self {
+		return new self($this->year, $this->month, $this->lastDayOfMonth());
+	}
+
 	public function previousDay(): self {
 		$year = $this->year;
 		$month = $this->month;

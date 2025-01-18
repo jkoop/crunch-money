@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\DateCast;
+use App\Helpers\Date;
 use App\Models\Scopes\OwnedScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,8 +53,8 @@ final class Period extends Model {
 				Session::forget("period_id");
 			}
 
-			$now = Carbon::now();
-			$period = Period::where("start", "<=", $now)->where("end", ">=", $now)->first();
+			$today = Date::today();
+			$period = Period::where("start", "<=", $today)->where("end", ">=", $today)->first();
 
 			if ($period != null) {
 				Session::put("period_id", $period->id);
@@ -62,8 +63,8 @@ final class Period extends Model {
 
 			$period = Period::create([
 				"owner_id" => Auth::user()->id,
-				"start" => (clone $now)->startOfMonth(),
-				"end" => (clone $now)->endOfMonth(),
+				"start" => $today->startOfMonth(),
+				"end" => $today->endOfMonth(),
 			]);
 
 			Session::put("period_id", $period->id);

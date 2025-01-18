@@ -21,7 +21,7 @@ final class LoginController extends Controller {
 		$user = User::where("token", $request->token)->first();
 
 		if ($user == null) {
-			return Redirect::to("/login")->withErrors(["Invalid token"]);
+			return Redirect::to("/login")->withErrors(["token" => "Invalid token"]);
 		}
 
 		Auth::login($user);
