@@ -13,7 +13,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -51,9 +50,9 @@ final class PeriodController extends Controller {
 				throw new ImpossibleStateException();
 			$oldStart = $period->start;
 			$oldEnd = $period->end;
-			$oldDuration = round($oldStart->diffInDays($oldEnd));
-			$period->start = (clone $oldEnd)->addDay();
-			$period->end = (clone $oldEnd)->addDays($oldDuration);
+			$oldDuration = $oldStart->difference($oldEnd);
+			$period->start = $oldEnd->nextDay();
+			$period->end = $period->start->daysLater($oldDuration);
 		} else {
 			$slug = $start_date;
 			$period = Period::where("start", $start_date)->firstOrFail();
@@ -118,13 +117,12 @@ final class PeriodController extends Controller {
 
 			$warnings = [];
 
-			if ($period->start->format("Y-m-d") != $request->start) {
-				$warnings[] =
-					"The start date was already taken, so we changed it to " . $period->start->format("Y-m-d");
+			if ($period->start->format() != $request->start) {
+				$warnings[] = "The start date was already taken, so we changed it to " . $period->start->format();
 			}
 
-			if ($period->end->format("Y-m-d") != $request->end) {
-				$warnings[] = "The end date was already taken, so we changed it to " . $period->end->format("Y-m-d");
+			if ($period->end->format() != $request->end) {
+				$warnings[] = "The end date was already taken, so we changed it to " . $period->end->format();
 			}
 
 			$incomeIds = collect($request->incomes)
@@ -170,7 +168,7 @@ final class PeriodController extends Controller {
 						->get()
 						->map(
 							fn($transaction) => fputcsv($csv, [
-								$transaction->date->format("Y-m-d"),
+								$transaction->date->format(),
 								$budget->name,
 								$transaction->amount,
 								$transaction->description,
@@ -425,14 +423,10 @@ final class PeriodController extends Controller {
 				)
 			) {
 				// increment start date and try again
-				$period->start = Carbon::parse($period->start)
-					->addDay()
-					->format("Y-m-d");
+				$period->start = $period->start->nextDay();
 
 				if ($period->start == $period->end) {
-					$period->end = Carbon::parse($period->end)
-						->addDay()
-						->format("Y-m-d");
+					$period->end = $period->end->nextDay();
 				}
 			} elseif (
 				$result instanceof QueryException &&
@@ -441,9 +435,7 @@ final class PeriodController extends Controller {
 				)
 			) {
 				// increment end date and try again
-				$period->end = Carbon::parse($period->end)
-					->addDay()
-					->format("Y-m-d");
+				$period->end = $period->end->nextDay();
 			} else {
 				throw $result;
 			}

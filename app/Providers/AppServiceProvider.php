@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider {
 		});
 
 		Gate::define("edit-profile", function (User $user) {
-			return $user->is_demo != false;
+			return $user->is_demo == false;
 		});
 	}
 }

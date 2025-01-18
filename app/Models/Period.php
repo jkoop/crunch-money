@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Casts\Date;
+use App\Casts\DateCast;
 use App\Models\Scopes\OwnedScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,8 +16,8 @@ final class Period extends Model {
 	protected $guarded = [];
 
 	protected $casts = [
-		"start" => Date::class,
-		"end" => Date::class,
+		"start" => DateCast::class,
+		"end" => DateCast::class,
 	];
 
 	public function owner() {
@@ -72,7 +72,7 @@ final class Period extends Model {
 	}
 
 	public function previousPeriod(): Builder {
-		return self::where("end", (clone $this->start)->subDay()->format("Y-m-d"));
+		return self::where("end", $this->start->previousDay());
 	}
 
 	public function getCarryoverAttribute(self|int $excludePeriod = null): float {

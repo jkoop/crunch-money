@@ -19,7 +19,7 @@
 			@endif
 			@foreach ($transactions as $transaction)
 				<tr>
-					<td>{{ $transaction->date->format('Y-m-d') }}</td>
+					<td>{{ $transaction->date->format() }}</td>
 					<td class="number">@money($transaction->amount)</td>
 					<td>
 						@if ($transaction->fund != null)

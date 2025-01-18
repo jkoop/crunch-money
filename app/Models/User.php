@@ -11,6 +11,10 @@ class User extends Authenticatable {
 
 	protected $casts = [
 		"is_admin" => "boolean",
+		"two_digit_year" => "boolean",
+		"show_dow_on_tables" => "boolean",
+		"show_dow_on_period_picker" => "boolean",
+		"always_show_year" => "boolean",
 	];
 
 	/**

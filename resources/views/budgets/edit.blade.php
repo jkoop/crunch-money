@@ -45,7 +45,7 @@
 		</thead>
 		@foreach ($budget->transactions()->orderBy('date', 'desc')->orderBy('id', 'desc')->get() as $transaction)
 			<tr>
-				<td>{{ $transaction->date->format('D M j Y') }}</td>
+				<td>{{ $transaction->date->format() }}</td>
 				<td class="number">@money($transaction->amount)</td>
 				<td>{{ $transaction->getDescription() }}</td>
 			</tr>

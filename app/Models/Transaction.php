@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Casts\Date;
+use App\Casts\DateCast;
 use App\Models\Scopes\OwnedScope;
 use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
@@ -14,7 +14,7 @@ final class Transaction extends Model {
 	protected $guarded = [];
 
 	protected $casts = [
-		"date" => Date::class,
+		"date" => DateCast::class,
 		"is_system" => "boolean",
 		"amount" => "decimal:2",
 	];

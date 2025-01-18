@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\Date;
 use App\Http\Controllers\Controller;
 use App\Models\Budget;
 use App\Models\Fund;
@@ -10,7 +11,6 @@ use App\Models\Scopes\OwnedScope;
 use App\Models\Scopes\PeriodScope;
 use App\Models\Transaction;
 use App\Models\User;
-use Illuminate\Support\Carbon;
 
 final class DashboardController extends Controller {
 	public function get() {
@@ -24,18 +24,14 @@ final class DashboardController extends Controller {
 		return view("admin.dashboard", compact("stats"));
 	}
 
-	private static function getToday(): string {
-		return once(fn() => Carbon::now()->format("Y-m-d"));
-	}
-
 	private function getBudgets(): array {
 		return [
 			"current" => Budget::withoutGlobalScopes([OwnedScope::class, PeriodScope::class])
 				->whereIn(
 					"period_id",
 					Period::withoutGlobalScope(OwnedScope::class)
-						->where("start", "<=", self::getToday())
-						->where("end", ">=", self::getToday())
+						->where("start", "<=", Date::today())
+						->where("end", ">=", Date::today())
 						->select("id"),
 				)
 				->count(),
@@ -55,8 +51,8 @@ final class DashboardController extends Controller {
 				->whereIn(
 					"period_id",
 					Period::withoutGlobalScope(OwnedScope::class)
-						->where("start", "<=", self::getToday())
-						->where("end", ">=", self::getToday())
+						->where("start", "<=", Date::today())
+						->where("end", ">=", Date::today())
 						->select("id"),
 				)
 				->count(),
@@ -67,8 +63,8 @@ final class DashboardController extends Controller {
 	private function getPeriods(): array {
 		return [
 			"current" => Period::withoutGlobalScope(OwnedScope::class)
-				->where("start", "<=", self::getToday())
-				->where("end", ">=", self::getToday())
+				->where("start", "<=", Date::today())
+				->where("end", ">=", Date::today())
 				->count(),
 			"total" => Period::withoutGlobalScope(OwnedScope::class)->count(),
 		];

@@ -42,14 +42,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function movePeriodPicker() {
 	const periodPickerContainer = document.getElementById("period-picker-container");
-	const spacers = document.querySelectorAll("nav > div:last-of-type > span.flex-grow");
+	const spacer = document.querySelector("nav > div:last-of-type > span.flex-grow");
 	if (periodPickerContainer == null) return; // admin layout doesn't have this
 
 	// md breakpoint
-	if (window.innerWidth >= 768) {
-		spacers[0].after(periodPickerContainer);
+	if (window.innerWidth >= 768 && spacer != null) {
+		spacer.after(periodPickerContainer);
 	} else {
-		spacers[0].closest("div").before(periodPickerContainer);
+		spacer.closest("div").before(periodPickerContainer);
 	}
 }
 
@@ -72,3 +72,10 @@ if (window.downloads != undefined) {
 
 window.dispatchEvent(new Event("js-ready"));
 Alpine.start();
+
+function updateTimezoneCookie() {
+	cookieStore.set("timezone-offset", new Date().getTimezoneOffset());
+}
+
+setInterval(updateTimezoneCookie, 67_000);
+updateTimezoneCookie();

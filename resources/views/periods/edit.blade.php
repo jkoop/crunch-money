@@ -1,12 +1,12 @@
 @extends('layouts.default')
-@section('title', $period->start->format('D M j Y') . ' - Periods')
+@section('title', $period->start->format() . ' - Periods')
 
 @section('content')
 	<script>
 		window.period = {
 			id: {{ Js::from($period->id) }},
-			start: {{ Js::from($period->start->format('Y-m-d')) }},
-			end: {{ Js::from($period->end->format('Y-m-d')) }},
+			start: {{ Js::from((string) $period->start) }},
+			end: {{ Js::from((string) $period->end) }},
 			incomes: {{ Js::from($period->incomes->sortBy('name')->values()) }},
 			carryover: {{ Js::from($period->carryover) }},
 			budgets: {{ Js::from($budgets->sortBy('name')->values()) }},

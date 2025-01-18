@@ -2,7 +2,7 @@
 	<nav>
 		<div id="period-picker-container">
 			@if (Str::of(Request::path())->match('#^p/\d#')->isEmpty())
-				<a class="text-sm" href="/p/{{ Period::current()->start->format('Y-m-d') }}">Edit</a>
+				<a class="text-sm" href="/p/{{ (string) Period::current()->start }}">Edit</a>
 				<x-period-picker />
 			@endif
 		</div>

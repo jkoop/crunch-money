@@ -19,8 +19,8 @@
 			@endif
 			@foreach ($periods as $period)
 				<tr>
-					<td><a href="/p/{{ $period->start->format('Y-m-d') }}">{{ $period->start->format('D M j Y') }}</a></td>
-					<td>{{ $period->end->format('D M j Y') }}</td>
+					<td><a href="/p/{{ (string) $period->start }}">{{ $period->start->format() }}</a></td>
+					<td>{{ $period->end->format() }}</td>
 				</tr>
 			@endforeach
 		</tbody>
