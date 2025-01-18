@@ -27,3 +27,5 @@ jobs:
         run: chmod -R 777 storage bootstrap/cache
       - name: Execute tests (Feature tests) via PHPUnit/Pest
         run: php artisan test
+        env:
+          DB_DATABASE: ":memory:"
