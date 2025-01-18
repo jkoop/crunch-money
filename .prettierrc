@@ -15,6 +15,12 @@
 				"sortHtmlAttributes": "code-guide",
 				"singleQuote": true
 			}
+		},
+		{
+			"files": ["*.yml"],
+			"options": {
+				"tabWidth": 2
+			}
 		}
 	],
 	"trailingComma": "es5",

@@ -20,15 +20,7 @@ class AppServiceProvider extends ServiceProvider {
 	 * Bootstrap any application services.
 	 */
 	public function boot(): void {
-		// add regexp function to SQLite
-		if (DB::connection() instanceof \Illuminate\Database\SQLiteConnection) {
-			DB::connection()
-				->getPdo()
-				->sqliteCreateFunction("regexp", function ($pattern, $value) {
-					mb_regex_encoding("UTF-8");
-					return false !== mb_ereg($pattern, $value) ? 1 : 0;
-				});
-		}
+		$this->addRegexToSqlite();
 
 		Blade::directive("money", function ($expression) {
 			return "<?php echo number_format($expression, 2, '.', ','); ?>";
@@ -41,5 +33,16 @@ class AppServiceProvider extends ServiceProvider {
 		Gate::define("edit-profile", function (User $user) {
 			return $user->is_demo == false;
 		});
+	}
+
+	private function addRegexToSqlite(): void {
+		if (DB::connection() instanceof \Illuminate\Database\SQLiteConnection) {
+			DB::connection()
+				->getPdo()
+				->sqliteCreateFunction("regexp", function ($pattern, $value) {
+					mb_regex_encoding("UTF-8");
+					return false !== mb_ereg($pattern, $value) ? 1 : 0;
+				});
+		}
 	}
 }
