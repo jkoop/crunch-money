@@ -6,7 +6,14 @@ use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class LoginTest extends TestCase {
+final class LoginTest extends TestCase {
+	public function setup(): void {
+		parent::setup();
+
+		// the parent's setup logs us in
+		$this->get("/logout")->assertSessionHasNoErrors()->assertRedirect();
+	}
+
 	#[Test]
 	public function loginFailsForMissingUser(): void {
 		$this->post("/login", [
@@ -24,9 +31,6 @@ class LoginTest extends TestCase {
 			"token" => $user->token,
 		])->assertRedirect("/b");
 
-		$this->get("/b")
-			->assertSessionHasNoErrors()
-			->assertOk()
-			->assertSeeText($user->name);
+		$this->get("/b")->assertSessionHasNoErrors()->assertOk()->assertSeeText($user->name);
 	}
 }

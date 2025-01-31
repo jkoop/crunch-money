@@ -6,6 +6,7 @@ use App\Models\Scopes\OwnedScope;
 use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,6 +15,8 @@ use Illuminate\Support\Str;
 
 #[ScopedBy([OwnedScope::class, PeriodScope::class])]
 final class Fund extends Model {
+	use HasFactory;
+
 	protected $guarded = [];
 
 	public function owner(): BelongsTo {

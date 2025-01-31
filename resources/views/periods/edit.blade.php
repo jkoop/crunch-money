@@ -153,7 +153,8 @@
 				<span x-text="money(surplus())"></span></span>
 
 			@unless ($slug == 'new')
-				<button name="delete" value="on" onclick="confirm('Are you sure you want to delete this period? You will also delete all associated transactions.')">
+				<button name="delete" value="on"
+					onclick="confirm('Are you sure you want to delete this period? You will also delete all associated transactions.')">
 					Delete
 				</button>
 			@endunless

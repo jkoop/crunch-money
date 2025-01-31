@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Exceptions\ImpossibleStateException;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class Date implements \Stringable {
@@ -139,12 +140,23 @@ class Date implements \Stringable {
 		return self::getIsLeapYear($this->year);
 	}
 
+	private static function getUser(): ?User {
+		try {
+			return Auth::user();
+		} catch (\RuntimeException $e) {
+			if ($e->getMessage() == "A facade root has not been set.") {
+				return null;
+			}
+			throw $e;
+		}
+	}
+
 	public function format(bool $forOverheadPeriodPicker = false): string {
-		$dateFormat = Auth::user()->date_format ?? "mdy";
-		$twoDigitYear = Auth::user()->two_digit_year ?? false;
-		$showDowOnTables = Auth::user()->show_dow_on_tables ?? true;
-		$showDowOnPeriodPicker = Auth::user()->show_dow_on_period_picker ?? false;
-		$alwaysShowYear = Auth::user()->always_show_year ?? false;
+		$dateFormat = self::getUser()->date_format ?? "mdy";
+		$twoDigitYear = self::getUser()->two_digit_year ?? false;
+		$showDowOnTables = self::getUser()->show_dow_on_tables ?? true;
+		$showDowOnPeriodPicker = self::getUser()->show_dow_on_period_picker ?? false;
+		$alwaysShowYear = self::getUser()->always_show_year ?? false;
 
 		$buffer = [];
 

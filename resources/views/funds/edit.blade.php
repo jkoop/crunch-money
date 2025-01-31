@@ -23,7 +23,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			@foreach ($fund->transactions()->orderByDesc('date')->get() as $transaction)
+			@foreach ($fund->transactions()->orderByDesc('id', 'date')->get() as $transaction)
 				<tr>
 					<td>{{ $transaction->date->format() }}</td>
 					<td class="number">@money($transaction->amount)</td>

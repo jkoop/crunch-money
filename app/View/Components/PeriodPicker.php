@@ -8,8 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 final class PeriodPicker extends Component {
-	public function __construct() {
-	}
+	public function __construct() {}
 
 	public function render(): View|Closure|string {
 		$currentPeriod = Period::current(); // this is called first to create the default period

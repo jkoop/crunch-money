@@ -30,6 +30,6 @@ jobs:
       - name: Build assets
         run: npm run build
       - name: Execute tests (Feature tests) via PHPUnit/Pest
-        run: php artisan test --testsuite Feature
+        run: php artisan test
         env:
           DB_DATABASE: ":memory:"

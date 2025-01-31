@@ -6,11 +6,14 @@ use App\Casts\DateCast;
 use App\Models\Scopes\OwnedScope;
 use App\Models\Scopes\PeriodScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 #[ScopedBy([OwnedScope::class, PeriodScope::class])]
 final class Transaction extends Model {
+	use HasFactory;
+
 	protected $guarded = [];
 
 	protected $casts = [

@@ -91,9 +91,7 @@ final class PeriodController extends Controller {
 
 			if ($period->id != null && $request->has("delete")) {
 				$period->delete();
-				Fund::withoutGlobalScope(PeriodScope::class)
-					->whereDoesntHave("periods")
-					->delete();
+				Fund::withoutGlobalScope(PeriodScope::class)->whereDoesntHave("periods")->delete();
 				return Redirect::to("/p");
 			}
 
@@ -125,9 +123,7 @@ final class PeriodController extends Controller {
 				$warnings[] = "The end date was already taken, so we changed it to " . $period->end->format();
 			}
 
-			$incomeIds = collect($request->incomes)
-				->pluck("id")
-				->toArray();
+			$incomeIds = collect($request->incomes)->pluck("id")->toArray();
 
 			foreach ($period->incomes as $income) {
 				if (!in_array($income->id, $incomeIds)) {
@@ -153,9 +149,7 @@ final class PeriodController extends Controller {
 				}
 			}
 
-			$budgetIds = collect($request->budgets)
-				->pluck("id")
-				->toArray();
+			$budgetIds = collect($request->budgets)->pluck("id")->toArray();
 
 			$csv = fopen("php://memory", "rw");
 			fputcsv($csv, ["Date", "Budget", "Amount", "Description"]);
@@ -292,9 +286,7 @@ final class PeriodController extends Controller {
 				}
 			}
 
-			$fundIds = collect($request->funds)
-				->pluck("id")
-				->toArray();
+			$fundIds = collect($request->funds)->pluck("id")->toArray();
 
 			/**
 			 * when deleting a fund, detach it from the current period, then check if the fund
@@ -304,10 +296,7 @@ final class PeriodController extends Controller {
 			foreach ($period->funds as $fund) {
 				if (!in_array($fund->id, $fundIds)) {
 					$fund->periods()->detach($period->id);
-					$fund
-						->transactions()
-						->where("period_id", $period->id)
-						->delete();
+					$fund->transactions()->where("period_id", $period->id)->delete();
 
 					if ($fund->transactions()->where("amount", "!=", 0)->exists() == false) {
 						$fund->delete();
@@ -329,9 +318,7 @@ final class PeriodController extends Controller {
 				if ($existingFund == null) {
 					$slug = Fund::generateSlug($fund["name"], $period);
 
-					$existingFund = Fund::withoutGlobalScope(PeriodScope::class)
-						->where("slug", $slug)
-						->first();
+					$existingFund = Fund::withoutGlobalScope(PeriodScope::class)->where("slug", $slug)->first();
 
 					if ($existingFund == null) {
 						$existingFund = Fund::create([

@@ -7,13 +7,15 @@ use App\Helpers\Date;
 use App\Models\Scopes\OwnedScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 #[ScopedBy([OwnedScope::class])]
 final class Period extends Model {
+	use HasFactory;
+
 	protected $guarded = [];
 
 	protected $casts = [
@@ -38,9 +40,7 @@ final class Period extends Model {
 	}
 
 	public function funds() {
-		return $this->belongsToMany(Fund::class)
-			->withoutGlobalScopes()
-			->withPivot("amount");
+		return $this->belongsToMany(Fund::class)->withoutGlobalScopes()->withPivot("amount");
 	}
 
 	public static function current(): Period {
@@ -54,21 +54,28 @@ final class Period extends Model {
 			}
 
 			$today = Date::today();
-			$period = Period::where("start", "<=", $today)->where("end", ">=", $today)->first();
+			$todaysPeriod = Period::where("start", "<=", $today)->where("end", ">=", $today)->first();
 
-			if ($period != null) {
-				Session::put("period_id", $period->id);
-				return $period;
+			if ($todaysPeriod != null) {
+				Session::put("period_id", $todaysPeriod->id);
+				return $todaysPeriod;
 			}
 
-			$period = Period::create([
+			$mostRecentPeriod = Period::where("start", "<=", $today)->first();
+
+			if ($mostRecentPeriod != null) {
+				Session::put("period_id", $mostRecentPeriod->id);
+				return $mostRecentPeriod;
+			}
+
+			$newPeriod = Period::create([
 				"owner_id" => Auth::user()->id,
 				"start" => $today->startOfMonth(),
 				"end" => $today->endOfMonth(),
 			]);
 
-			Session::put("period_id", $period->id);
-			return $period;
+			Session::put("period_id", $newPeriod->id);
+			return $newPeriod;
 		});
 	}
 

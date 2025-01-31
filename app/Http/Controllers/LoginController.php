@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 
 final class LoginController extends Controller {
 	public function get() {
@@ -25,7 +26,13 @@ final class LoginController extends Controller {
 		}
 
 		Auth::login($user);
-		return redirect()->intended("/b");
+
+		// if (Session::get("intended"))
+		if (Session::get("url.intended") != URL::to("/login") && Session::get("url.intended") != URL::to("/logout")) {
+			return Redirect::intended("/b");
+		} else {
+			return Redirect::to("/b");
+		}
 	}
 
 	public function logout() {
