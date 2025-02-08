@@ -12,7 +12,7 @@
 		<tbody>
 			@if ($budgets->isEmpty())
 				<tr>
-					<td colspan="2">No budgets found; this should never happen</td>
+					<td colspan="2">No budgets found; if you're not a new user, this should never happen</td>
 				</tr>
 			@endif
 			@foreach ($budgets as $budget)

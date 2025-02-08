@@ -1,4 +1,4 @@
-name: Laravel Test
+name: Test and Build and Push Docker Image
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ["master"]
 
 jobs:
-  laravel-tests:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,3 +33,28 @@ jobs:
         run: php artisan test
         env:
           DB_DATABASE: ":memory:"
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ github.repository_owner	}}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile
+          build-args: |
+            REPO=${{ github.repository }}
+            VER=${{ github.run_number }}
+          platforms: linux/amd64
+          # linux/386
+          # linux/arm/v7
+          # linux/arm64
+          push: true
+          tags: ${{ github.repository }}:latest, ${{ github.repository }}:${{ github.run_number }}

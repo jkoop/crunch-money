@@ -6,7 +6,7 @@ use App\Models\Budget;
 use App\Models\Fund;
 use App\Models\Income;
 use App\Models\Period;
-use Js;
+use Illuminate\Support\Js;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -28,22 +28,11 @@ final class PeriodTest extends TestCase {
 
 	#[Test]
 	public function editPageHasInfo(): void {
-		$incomes = Income::factory()
-			->count(3)
-			->for($this->period)
-			->for($this->user, "owner")
-			->create();
+		$incomes = Income::factory()->count(3)->for($this->period)->for($this->user, "owner")->create();
 
-		$budgets = Budget::factory()
-			->count(3)
-			->for($this->period)
-			->for($this->user, "owner")
-			->create();
+		$budgets = Budget::factory()->count(3)->for($this->period)->for($this->user, "owner")->create();
 
-		$funds = Fund::factory()
-			->count(3)
-			->for($this->user, "owner")
-			->create();
+		$funds = Fund::factory()->count(3)->for($this->user, "owner")->create();
 
 		$funds->each(
 			fn(Fund $fund) => $fund->periods()->attach($this->period, ["amount" => fake()->randomFloat(2, 0, 9999.99)]),

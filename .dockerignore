@@ -1,0 +1,6 @@
+database/*.sqlite*
+Dockerfile
+node_modules
+public/build
+public/hot
+vendor
