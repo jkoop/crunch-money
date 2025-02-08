@@ -12,6 +12,9 @@ if [ -z $APP_KEY ]; then
 	exit 1
 fi
 
+rm -fr /storage/framework
+php artisan optimize
+
 cp -v /storage/database.sqlite /storage/database_$(date +%Y%m%d-%H%M%S).sqlite
 php artisan migrate --force
 php artisan app:init
