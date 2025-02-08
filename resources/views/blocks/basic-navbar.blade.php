@@ -1,3 +1,5 @@
+@use(App\Models\Period)
+
 @if (Auth::check())
 	<nav>
 		<div id="period-picker-container">

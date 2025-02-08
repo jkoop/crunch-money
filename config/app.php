@@ -120,12 +120,6 @@ return [
 		"store" => env("APP_MAINTENANCE_STORE", "database"),
 	],
 
-	"aliases" => Facade::defaultAliases()
-		->merge([
-			"Period" => App\Models\Period::class,
-		])
-		->toArray(),
-
 	"service_status" => [
 		"url" => env("SERVICE_STATUS_URL", null),
 	],
