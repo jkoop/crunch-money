@@ -11,7 +11,7 @@ services:
   app:
     image: jkoop/crunch-money
     # environment:
-    #   APP_KEY: the container's log will tell you what to put here
+    #   - APP_KEY=the container's log will tell you what to put here
     volumes:
       - ./storage:/storage
     ports:
