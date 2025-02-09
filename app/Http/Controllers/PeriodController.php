@@ -115,11 +115,11 @@ final class PeriodController extends Controller {
 
 			$warnings = [];
 
-			if ($period->start->format() != $request->start) {
+			if ((string) $period->start != $request->start) {
 				$warnings[] = "The start date was already taken, so we changed it to " . $period->start->format();
 			}
 
-			if ($period->end->format() != $request->end) {
+			if ((string) $period->end != $request->end) {
 				$warnings[] = "The end date was already taken, so we changed it to " . $period->end->format();
 			}
 
