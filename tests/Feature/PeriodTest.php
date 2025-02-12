@@ -88,4 +88,43 @@ final class PeriodTest extends TestCase {
 
 		$this->assertFalse(Period::where("start", "2020-01-01")->exists());
 	}
+
+	#[Test]
+	public function dateDeduplicationWarningShowsAsAppropriate(): void {
+		$this->assertTrue(Period::where("start", "2020-01-01")->exists());
+
+		$this->post("/p/new", [
+			"start" => "2020-02-01",
+			"end" => "2020-02-29",
+			"incomes" => [["id" => "_", "name" => "a", "amount" => "0"]],
+			"budgets" => [["id" => "_", "name" => "a", "amount" => "0"]],
+			"funds" => [["id" => "_", "name" => "a", "amount" => "0"]],
+		])
+			->assertSessionHasNoErrors()
+			->assertRedirect();
+
+		$this->get("/p")
+			->assertSessionHasNoErrors()
+			->assertOk()
+			->assertDontSeeText("The start date was already taken")
+			->assertDontSeeText("The end date was already taken");
+
+		// repeat the request, with data that's now duplicate
+
+		$this->post("/p/new", [
+			"start" => "2020-02-01",
+			"end" => "2020-02-29",
+			"incomes" => [["id" => "_", "name" => "a", "amount" => "0"]],
+			"budgets" => [["id" => "_", "name" => "a", "amount" => "0"]],
+			"funds" => [["id" => "_", "name" => "a", "amount" => "0"]],
+		])
+			->assertSessionHasNoErrors()
+			->assertRedirect();
+
+		$this->get("/p")
+			->assertSessionHasNoErrors()
+			->assertOk()
+			->assertSeeText("The start date was already taken")
+			->assertSeeText("The end date was already taken");
+	}
 }
