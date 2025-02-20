@@ -97,7 +97,7 @@ final class PeriodController extends Controller {
 
 			$request->validate([
 				"start" => "required|date",
-				"end" => "required|date|after:start",
+				"end" => "required|date|after_or_equal:start", // @todo write a test for this after_or_equal
 				"incomes" => "required|array|min:1",
 				"incomes.*.id" => "required",
 				"incomes.*.name" => "required|string|max:255",
