@@ -123,4 +123,8 @@ return [
 	"service_status" => [
 		"url" => env("SERVICE_STATUS_URL", null),
 	],
+
+	"tracking" => [
+		"html" => env("TRACKING_HTML", null),
+	],
 ];

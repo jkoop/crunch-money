@@ -12,4 +12,8 @@
 	</script>
 @endif
 
+@if (config("app.tracking.html", null) != null)
+	{!! config("app.tracking.html", null) !!}
+@endif
+
 @vite(['resources/css/app.css', 'resources/js/app.js'])
